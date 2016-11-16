@@ -2,7 +2,7 @@
 <CONFIGURATION> 
 	<SIP_STACK 
 stack_name="nist-proxy"
-stack_IP_address="192.168.1.3"
+stack_IP_address="127.0.0.1"
 router_path="gov.nist.sip.proxy.router.ProxyRouter"
 max_connections="20"
 thread_pool_size="20"
