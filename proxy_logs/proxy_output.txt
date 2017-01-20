@@ -1,0 +1,340 @@
+
+****************************************************
+Request BYE received:
+BYE sip:192.168.1.11:4000;transport=udp SIP/2.0
+Call-ID: 0284bf771b7e744bca09e14b09532cdd@192.168.1.4
+CSeq: 2 BYE
+From: "user" <sip:le_pipas@192.168.1.11:4000;transport=udp>;tag=2012846597
+To: <sip:dfs@192.168.1.11:4000>;tag=807536822
+Via: SIP/2.0/UDP 192.168.1.4:5060;branch=z9hG4bK204924a2b4641d76cbed3dde7b38ccba
+Max-Forwards: 70
+Route: "dfs" <sip:192.168.1.11:5060;transport=udp>
+Content-Length: 0
+
+
+DEBUG TRANSACTION INFO: here is the  server transaction: gov.nist.javax.sip.stack.SIPServerTransaction@ffcb2d16
+DEBUG INFO: Its dialog is: gov.nist.javax.sip.stack.SIPDialog@b03e907
+Proxy, processRequest(), we are responsible for the domain... Let's find the contact...
+ProxyRouter: request:
+BYE sip:192.168.1.11:4000;transport=udp SIP/2.0
+Call-ID: 0284bf771b7e744bca09e14b09532cdd@192.168.1.4
+CSeq: 2 BYE
+From: "user" <sip:le_pipas@192.168.1.11:4000;transport=udp>
+To: <sip:dfs@192.168.1.11:4000>
+Via: SIP/2.0/UDP 192.168.1.11:4000,SIP/2.0/UDP 192.168.1.4:5060;branch=z9hG4bK204924a2b4641d76cbed3dde7b38ccba
+Max-Forwards: 70
+Route: "dfs" <sip:192.168.1.11:5060;transport=udp>
+Content-Length: 0
+
+
+DEBUG, ProxyRouter, getNextHop(), The request has at least one route, we use the first one: 192.168.1.11:5060/udp
+
+***************************************************************
+***************************************************************
+Response 200 OK received:
+SIP/2.0 200 OK
+Call-ID: 0284bf771b7e744bca09e14b09532cdd@192.168.1.4
+CSeq: 2 BYE
+From: "user" <sip:le_pipas@192.168.1.11:4000;transport=udp>;tag=2012846597
+To: <sip:dfs@192.168.1.11:4000>;tag=807536822
+Via: SIP/2.0/UDP 192.168.1.11:4000;branch=z9hG4bK996647beae4915d7426ac4170bcd7656,SIP/2.0/UDP 192.168.1.4:5060;branch=z9hG4bK204924a2b4641d76cbed3dde7b38ccba
+Max-Forwards: 70
+Content-Length: 0
+
+
+Processing Response in progress
+DEBUG TRANSACTION INFO: here is the  client transaction: gov.nist.javax.sip.stack.SIPClientTransaction@93a354d8
+DEBUG TRANSACTION INFO: Its dialog is: gov.nist.javax.sip.stack.SIPDialog@2187ca3
+ResponseForwarding, forwardResponse() (STEP 9), the  response is statelessly forwarded:
+SIP/2.0 200 OK
+Call-ID: 0284bf771b7e744bca09e14b09532cdd@192.168.1.4
+CSeq: 2 BYE
+From: "user" <sip:le_pipas@192.168.1.11:4000;transport=udp>;tag=2012846597
+To: <sip:dfs@192.168.1.11:4000>;tag=807536822
+Via: SIP/2.0/UDP 192.168.1.4:5060;branch=z9hG4bK204924a2b4641d76cbed3dde7b38ccba
+Max-Forwards: 70
+Content-Length: 0
+
+
+
+****************************************************
+Request INVITE received:
+INVITE sip:dfs@192.168.1.11:4000 SIP/2.0
+Call-ID: d9692c189931b22f309d9c37a7734db4@192.168.1.4
+CSeq: 1 INVITE
+From: "user" <sip:le_pipas@192.168.1.11:4000;transport=udp>;tag=2012846597
+To: <sip:dfs@192.168.1.11:4000>
+Via: SIP/2.0/UDP 192.168.1.4:5060;branch=z9hG4bK34478b7a72fc514738228214c31573ef
+Max-Forwards: 70
+Contact: "user" <sip:192.168.1.4:5060;transport=udp>
+Content-Type: application/sdp
+Content-Length: 156
+
+v=0
+o=konka 0 0 IN IP4 192.168.1.4
+s=-
+c=IN IP4 192.168.1.4
+t=0 0
+m=audio 22224 RTP/AVP 0 3 4 5 6 8 15 18
+m=video 22222 RTP/AVP 26 34 31
+a=recvonly
+
+DEBUG TRANSACTION INFO: the transaction is null 
+Proxy, processRequest(), we are responsible for the domain... Let's find the contact...
+Proxy, processRequest(), we canonicalized the request-URI
+RegistrationsTable, hasRegistration(), Checking registration for "sip:dfs@192.168.1.11:4000" : registered
+Proxy, processRequest(), the target set is the set of the contacts URI from the  location service
+RequestForwarding, forwardRequest() (STEP 1), the request is cloned
+RequestForwarding, forwardRequest() (STEP 2), The Request-URI in the copy's start line is replaced with the URI for this target
+RequestForwarding, forwardRequest(),  (STEP 3) MaxForwardHeader  decremented by one.
+RequestForwarding, forwardRequest(), (STEP 4) record-route header created and added to the  cloned request
+RequestForwarding, forwardRequest(), (STEP 5) No Additional headers to add...
+RequestForwarding, forwardRequest(), (STEP 6) no Postprocess routing information to do (No routes detected)...
+RequestForwarding, forwardRequest(), (STEP 7) Determine Next-Hop Address, Port, and Transport will be done by the stack...
+RequestForwarding, forwardRequest(), (STEP 8) the proxy inserts a Via header field value into the copy before the existing Via header field values
+RequestForwarding, forwardRequest(), (STEP 8) Loop detection not implemented
+serverTransaction =  gov.nist.javax.sip.stack.SIPServerTransaction@4371a421
+dialog =  gov.nist.javax.sip.stack.SIPDialog@272b0a51
+RequestForwarding, forwardRequestStatefully(), the dialog state is null, so we have to forward the request using a new clientTransaction
+ProxyRouter: request:
+INVITE sip:192.168.1.11:5060 SIP/2.0
+Call-ID: d9692c189931b22f309d9c37a7734db4@192.168.1.4
+CSeq: 1 INVITE
+From: "user" <sip:le_pipas@192.168.1.11:4000;transport=udp>;tag=2012846597
+To: <sip:dfs@192.168.1.11:4000>
+Via: SIP/2.0/UDP 192.168.1.11:4000;branch=z9hG4bK66801992b6e06de0cdb0ff783445d286,SIP/2.0/UDP 192.168.1.4:5060;branch=z9hG4bK34478b7a72fc514738228214c31573ef
+Max-Forwards: 69
+Contact: "user" <sip:192.168.1.4:5060;transport=udp>
+Content-Type: application/sdp
+Record-Route: <sip:192.168.1.11:4000>
+Content-Length: 156
+
+v=0
+o=konka 0 0 IN IP4 192.168.1.4
+s=-
+c=IN IP4 192.168.1.4
+t=0 0
+m=audio 22224 RTP/AVP 0 3 4 5 6 8 15 18
+m=video 22222 RTP/AVP 26 34 31
+a=recvonly
+
+DEBUG, ProxyRouter, getNextHops(),  the hop added: host:192.168.1.11 port:5060 transport:udp
+RequestForwarding, forwardRequestStatefully(),, cloned request forwarded statefully:
+ INVITE sip:192.168.1.11:5060 SIP/2.0
+Call-ID: d9692c189931b22f309d9c37a7734db4@192.168.1.4
+CSeq: 1 INVITE
+From: "user" <sip:le_pipas@192.168.1.11:4000;transport=udp>;tag=2012846597
+To: <sip:dfs@192.168.1.11:4000>
+Via: SIP/2.0/UDP 192.168.1.11:4000;branch=z9hG4bK2bdc185faaf1883ef760291e6b9d51e4,SIP/2.0/UDP 192.168.1.4:5060;branch=z9hG4bK34478b7a72fc514738228214c31573ef
+Max-Forwards: 69
+Contact: "user" <sip:192.168.1.4:5060;transport=udp>
+Content-Type: application/sdp
+Record-Route: <sip:192.168.1.11:4000>
+Content-Length: 156
+
+v=0
+o=konka 0 0 IN IP4 192.168.1.4
+s=-
+c=IN IP4 192.168.1.4
+t=0 0
+m=audio 22224 RTP/AVP 0 3 4 5 6 8 15 18
+m=video 22222 RTP/AVP 26 34 31
+a=recvonly
+
+
+***************************************************************
+***************************************************************
+Response 180 Ringing received:
+SIP/2.0 180 Ringing
+Call-ID: d9692c189931b22f309d9c37a7734db4@192.168.1.4
+CSeq: 1 INVITE
+From: "user" <sip:le_pipas@192.168.1.11:4000;transport=udp>;tag=2012846597
+To: <sip:dfs@192.168.1.11:4000>;tag=765092074
+Via: SIP/2.0/UDP 192.168.1.11:4000;branch=z9hG4bK2bdc185faaf1883ef760291e6b9d51e4,SIP/2.0/UDP 192.168.1.4:5060;branch=z9hG4bK34478b7a72fc514738228214c31573ef
+Max-Forwards: 69
+Record-Route: <sip:192.168.1.11:4000>
+Content-Length: 0
+
+
+Processing Response in progress
+DEBUG TRANSACTION INFO: here is the  client transaction: gov.nist.javax.sip.stack.SIPClientTransaction@e72bd50b
+DEBUG TRANSACTION INFO: Its dialog is: gov.nist.javax.sip.stack.SIPDialog@6cad0744
+ResponseForwarding, forwardResponse() (STEP 9), the  response is statefully forwarded: 
+SIP/2.0 180 Ringing
+Call-ID: d9692c189931b22f309d9c37a7734db4@192.168.1.4
+CSeq: 1 INVITE
+From: "user" <sip:le_pipas@192.168.1.11:4000;transport=udp>;tag=2012846597
+To: <sip:dfs@192.168.1.11:4000>;tag=765092074
+Via: SIP/2.0/UDP 192.168.1.4:5060;branch=z9hG4bK34478b7a72fc514738228214c31573ef
+Max-Forwards: 69
+Record-Route: <sip:192.168.1.11:4000>
+Content-Length: 0
+
+
+
+***************************************************************
+***************************************************************
+Response 200 OK received:
+SIP/2.0 200 OK
+Call-ID: d9692c189931b22f309d9c37a7734db4@192.168.1.4
+CSeq: 1 INVITE
+From: "user" <sip:le_pipas@192.168.1.11:4000;transport=udp>;tag=2012846597
+To: <sip:dfs@192.168.1.11:4000>;tag=765092074
+Via: SIP/2.0/UDP 192.168.1.11:4000;branch=z9hG4bK2bdc185faaf1883ef760291e6b9d51e4,SIP/2.0/UDP 192.168.1.4:5060;branch=z9hG4bK34478b7a72fc514738228214c31573ef
+Max-Forwards: 69
+Record-Route: <sip:192.168.1.11:4000>
+Content-Type: application/sdp
+Contact: "dfs" <sip:192.168.1.11:5060;transport=udp>
+Content-Length: 160
+
+v=0
+o=thymios 0 0 IN IP4 192.168.1.11
+s=-
+c=IN IP4 192.168.1.11
+t=0 0
+m=audio 22224 RTP/AVP 0 3 4 5 6 8 15 18
+m=video 22222 RTP/AVP 26 34 31
+a=recvonly
+
+Processing Response in progress
+DEBUG TRANSACTION INFO: here is the  client transaction: gov.nist.javax.sip.stack.SIPClientTransaction@e72bd50b
+DEBUG TRANSACTION INFO: Its dialog is: gov.nist.javax.sip.stack.SIPDialog@6cad0744
+ResponseForwarding, forwardResponse()  (STEP 9), we changed the toTag:765092074
+ResponseForwarding, forwardResponse() (STEP 9), the  response is statefully forwarded: 
+SIP/2.0 200 OK
+Call-ID: d9692c189931b22f309d9c37a7734db4@192.168.1.4
+CSeq: 1 INVITE
+From: "user" <sip:le_pipas@192.168.1.11:4000;transport=udp>;tag=2012846597
+To: <sip:dfs@192.168.1.11:4000>;tag=765092074
+Via: SIP/2.0/UDP 192.168.1.4:5060;branch=z9hG4bK34478b7a72fc514738228214c31573ef
+Max-Forwards: 69
+Record-Route: <sip:192.168.1.11:4000>
+Content-Type: application/sdp
+Contact: "dfs" <sip:192.168.1.11:5060;transport=udp>
+Content-Length: 160
+
+v=0
+o=thymios 0 0 IN IP4 192.168.1.11
+s=-
+c=IN IP4 192.168.1.11
+t=0 0
+m=audio 22224 RTP/AVP 0 3 4 5 6 8 15 18
+m=video 22222 RTP/AVP 26 34 31
+a=recvonly
+
+
+****************************************************
+Request ACK received:
+ACK sip:192.168.1.11:4000;transport=udp SIP/2.0
+Call-ID: d9692c189931b22f309d9c37a7734db4@192.168.1.4
+CSeq: 1 ACK
+From: "user" <sip:le_pipas@192.168.1.11:4000;transport=udp>;tag=2012846597
+To: <sip:dfs@192.168.1.11:4000>;tag=765092074
+Via: SIP/2.0/UDP 192.168.1.4:5060;branch=3139322e3136382e312e343a3530363
+Max-Forwards: 70
+Route: "dfs" <sip:192.168.1.11:5060;transport=udp>
+Content-Length: 0
+
+
+DEBUG TRANSACTION INFO: here is the  server transaction: gov.nist.javax.sip.stack.SIPServerTransaction@e4e962d5
+DEBUG INFO: Its dialog is: gov.nist.javax.sip.stack.SIPDialog@272b0a51
+Proxy, processRequest(), we are responsible for the domain... Let's find the contact...
+Proxy, processRequest(), we canonicalized the request-URI
+RegistrationsTable, hasRegistration(), Checking registration for "sip:dfs@192.168.1.11:4000" : registered
+Proxy, processRequest(), the target set is the set of the contacts URI from the  location service
+RequestForwarding, forwardRequest() (STEP 1), the request is cloned
+RequestForwarding, forwardRequest() (STEP 2), The Request-URI in the copy's start line is replaced with the URI for this target
+RequestForwarding, forwardRequest(),  (STEP 3) MaxForwardHeader  decremented by one.
+RequestForwarding, forwardRequest(), (STEP 4) record-route header created and added to the  cloned request
+RequestForwarding, forwardRequest(), (STEP 5) No Additional headers to add...
+RequestForwarding, forwardRequest(), (STEP 6) no Postprocess routing information to do (the route has no lr parameter)...
+RequestForwarding, forwardRequest(), (STEP 7) Determine Next-Hop Address, Port, and Transport will be done by the stack...
+RequestForwarding, forwardRequest(), (STEP 8) the proxy inserts a Via header field value into the copy before the existing Via header field values
+RequestForwarding, forwardRequest(), (STEP 8) Loop detection not implemented
+RequestForwarding, forwardRequest(), no Content-Type header, we don't stripe any parameters!!!
+serverTransaction =  gov.nist.javax.sip.stack.SIPServerTransaction@e4e962d5
+dialog =  gov.nist.javax.sip.stack.SIPDialog@272b0a51
+Dialog checked.
+Printing TransactionsMappingTable...
+***********************************************
+this = gov.nist.sip.proxy.TransactionsMapping@7a2787da
+TRANSACTIONS TABLE: 
+- serverTransaction: gov.nist.javax.sip.stack.SIPServerTransaction@4371a421
+   - state: Terminated Transaction
+   - dialog: gov.nist.javax.sip.stack.SIPDialog@272b0a51
+   - dialog state: Confirmed Dialog
+   - its clientTransaction: gov.nist.javax.sip.stack.SIPClientTransaction@e72bd50b, state: Terminated Transaction
+********************************************
+
+Getting peer dialog...
+RequestForwarding, forwardRequestStatefully(), cloned ACK forwarded statefully  (using the dialog from the first client transaction):
+ ACK sip:192.168.1.11:5060 SIP/2.0
+Call-ID: d9692c189931b22f309d9c37a7734db4@192.168.1.4
+CSeq: 1 ACK
+From: "user" <sip:le_pipas@192.168.1.11:4000;transport=udp>;tag=2012846597
+To: <sip:dfs@192.168.1.11:4000>;tag=765092074
+Via: SIP/2.0/UDP 192.168.1.11:4000;branch=z9hG4bK69d2e62ae3406768d51bffa01d842397,SIP/2.0/UDP 192.168.1.4:5060;branch=3139322e3136382e312e343a3530363
+Max-Forwards: 69
+Route: "dfs" <sip:192.168.1.11:5060;transport=udp>
+Record-Route: <sip:192.168.1.11:4000>
+Content-Length: 0
+
+
+
+****************************************************
+Request BYE received:
+BYE sip:192.168.1.11:4000;transport=udp SIP/2.0
+Call-ID: d9692c189931b22f309d9c37a7734db4@192.168.1.4
+CSeq: 1 BYE
+To: "user" <sip:le_pipas@192.168.1.11:4000;transport=udp>;tag=2012846597
+From: <sip:dfs@192.168.1.11:4000>;tag=765092074
+Max-Forwards: 69
+Via: SIP/2.0/UDP 192.168.1.11:5060;branch=z9hG4bK8a6f132c4272711582934adc51f55e0e
+Route: "user" <sip:192.168.1.4:5060;transport=udp>
+Content-Length: 0
+
+
+DEBUG TRANSACTION INFO: here is the  server transaction: gov.nist.javax.sip.stack.SIPServerTransaction@ad1b18f2
+DEBUG INFO: Its dialog is: gov.nist.javax.sip.stack.SIPDialog@6cad0744
+Proxy, processRequest(), we are responsible for the domain... Let's find the contact...
+ProxyRouter: request:
+BYE sip:192.168.1.11:4000;transport=udp SIP/2.0
+Call-ID: d9692c189931b22f309d9c37a7734db4@192.168.1.4
+CSeq: 1 BYE
+To: "user" <sip:le_pipas@192.168.1.11:4000;transport=udp>
+From: <sip:dfs@192.168.1.11:4000>
+Max-Forwards: 69
+Via: SIP/2.0/UDP 192.168.1.11:4000,SIP/2.0/UDP 192.168.1.11:5060;branch=z9hG4bK8a6f132c4272711582934adc51f55e0e
+Route: "user" <sip:192.168.1.4:5060;transport=udp>
+Content-Length: 0
+
+
+DEBUG, ProxyRouter, getNextHop(), The request has at least one route, we use the first one: 192.168.1.4:5060/udp
+
+***************************************************************
+***************************************************************
+Response 200 OK received:
+SIP/2.0 200 OK
+Call-ID: d9692c189931b22f309d9c37a7734db4@192.168.1.4
+CSeq: 1 BYE
+To: "user" <sip:le_pipas@192.168.1.11:4000;transport=udp>;tag=2012846597
+From: <sip:dfs@192.168.1.11:4000>;tag=765092074
+Max-Forwards: 69
+Via: SIP/2.0/UDP 192.168.1.11:4000;branch=z9hG4bK2e3e08f30116f516646dcd90647d1b75,SIP/2.0/UDP 192.168.1.11:5060;branch=z9hG4bK8a6f132c4272711582934adc51f55e0e
+Content-Length: 0
+
+
+Processing Response in progress
+DEBUG TRANSACTION INFO: here is the  client transaction: gov.nist.javax.sip.stack.SIPClientTransaction@898ad3d1
+DEBUG TRANSACTION INFO: Its dialog is: gov.nist.javax.sip.stack.SIPDialog@272b0a51
+ResponseForwarding, forwardResponse() (STEP 9), the  response is statelessly forwarded:
+SIP/2.0 200 OK
+Call-ID: d9692c189931b22f309d9c37a7734db4@192.168.1.4
+CSeq: 1 BYE
+To: "user" <sip:le_pipas@192.168.1.11:4000;transport=udp>;tag=2012846597
+From: <sip:dfs@192.168.1.11:4000>;tag=765092074
+Max-Forwards: 69
+Via: SIP/2.0/UDP 192.168.1.11:5060;branch=z9hG4bK8a6f132c4272711582934adc51f55e0e
+Content-Length: 0
+
+
