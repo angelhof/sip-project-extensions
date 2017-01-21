@@ -1,0 +1,75 @@
+2249662 [AWT-EventQueue-0] TRACE communicator.SipCommunicator  - [entry] handleHangupRequest
+2249662 [AWT-EventQueue-0] TRACE sip.SipManager  - [entry] endCall
+2249662 [AWT-EventQueue-0] TRACE sip.CallProcessing  - [entry] endCall
+2249662 [AWT-EventQueue-0] TRACE sip.Call  - [entry] setState
+2249662 [AWT-EventQueue-0] DEBUG sip.Call  - setting call status to Disconnected
+2249662 [AWT-EventQueue-0] TRACE communicator.Interlocutor  - [entry] callStateChanged
+2249662 [AWT-EventQueue-0] TRACE communicator.Interlocutor  - [exit] callStateChanged
+2249662 [AWT-EventQueue-0] TRACE communicator.SipCommunicator  - [entry] callStateChanged
+2249662 [AWT-EventQueue-0] TRACE media.MediaManager  - [entry] closeStreams
+2249662 [AWT-EventQueue-0] TRACE media.MediaManager  - [entry] stopTransmitters
+2249663 [AWT-EventQueue-0] TRACE media.AVTransmitter  - [entry] stop
+2249670 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [entry] controllerUpdate
+2249670 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [exit] controllerUpdate
+2249670 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [entry] controllerUpdate
+2249670 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [exit] controllerUpdate
+2249670 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [entry] controllerUpdate
+2249670 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [exit] controllerUpdate
+2249670 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [entry] controllerUpdate
+2249670 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [exit] controllerUpdate
+2249670 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [entry] controllerUpdate
+2249670 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [exit] controllerUpdate
+2249670 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [entry] controllerUpdate
+2249670 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [exit] controllerUpdate
+2249670 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [entry] controllerUpdate
+2249670 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [exit] controllerUpdate
+2249670 [RTPEventHandler] DEBUG media.AVReceiver  - received the following JMF Session event - javax.media.rtp.event.StreamClosedEvent
+2249671 [AWT-EventQueue-0] TRACE media.AVTransmitter  - [exit] stop
+2249671 [AWT-EventQueue-0] TRACE media.MediaManager  - [exit] stopTransmitters
+2249671 [AWT-EventQueue-0] TRACE media.MediaManager  - [entry] stopReceiver
+2249671 [AWT-EventQueue-0] TRACE media.AVReceiver  - [entry] close
+2249671 [AWT-EventQueue-0] DEBUG media.AVReceiver  - Stopped mgr 1
+2249671 [AWT-EventQueue-0] TRACE media.AVReceiver  - [exit] close
+2249671 [AWT-EventQueue-0] TRACE media.MediaManager  - [exit] stopReceiver
+2249671 [AWT-EventQueue-0] TRACE media.MediaManager  - [entry] firePlayerStopped
+2249671 [AWT-EventQueue-0] TRACE communicator.SipCommunicator  - [entry] playerStopped
+2249671 [AWT-EventQueue-0] TRACE communicator.SipCommunicator  - [exit] playerStopped
+2249672 [AWT-EventQueue-0] TRACE media.MediaManager  - [exit] firePlayerStopped
+2249672 [AWT-EventQueue-0] TRACE media.MediaManager  - [exit] closeStreams
+2249672 [AWT-EventQueue-0] TRACE communicator.SipCommunicator  - [exit] callStateChanged
+2249672 [AWT-EventQueue-0] TRACE sip.CallDispatcher  - [entry] removeCall
+2249672 [AWT-EventQueue-0] DEBUG sip.CallDispatcher  - removing call[ Call 180434823
+from bfs@sip:bfs@192.168.1.11:4000
+SDP:v=0
+o=thymios 0 0 IN IP4 192.168.1.17
+s=-
+c=IN IP4 192.168.1.17
+t=0 0
+m=audio 22224 RTP/AVP 0 3 4 5 6 8 15 18
+a=recvonly
+m=video 22232 RTP/AVP 26 34 31
+a=recvonly
+]
+2249672 [AWT-EventQueue-0] TRACE sip.CallDispatcher  - [exit] removeCall
+2249672 [AWT-EventQueue-0] TRACE sip.Call  - [exit] setState
+2249672 [AWT-EventQueue-0] TRACE sip.CallProcessing  - [entry] sayBye
+hop = 192.168.1.17:5700/udp
+
+2249673 [AWT-EventQueue-0] DEBUG sip.CallProcessing  - sent request: BYE sip:192.168.1.11:4000;transport=udp SIP/2.0
+Call-ID: 457eb6dd89f98eb3ea262f34317eb45c@192.168.1.4
+CSeq: 2 BYE
+From: "user" <sip:le_pipas@192.168.1.11:4000;transport=udp>;tag=2012846597
+To: <sip:bfs@192.168.1.11:4000>;tag=2378480
+Via: SIP/2.0/UDP 192.168.1.4:5060;branch=z9hG4bK3b6a1af6b83c656f8bee02cb72f893ad
+Max-Forwards: 70
+Route: "user" <sip:192.168.1.17:5700;transport=udp>
+Content-Length: 0
+
+
+2249674 [AWT-EventQueue-0] TRACE sip.CallProcessing  - [exit] sayBye
+2249674 [AWT-EventQueue-0] TRACE sip.CallProcessing  - [exit] endCall
+2249674 [AWT-EventQueue-0] TRACE sip.SipManager  - [exit] endCall
+2249674 [AWT-EventQueue-0] TRACE communicator.SipCommunicator  - [exit] handleHangupRequest
+2281692 [EventScannerThread] TRACE sip.SipManager  - [entry] processTimeout
+2281693 [EventScannerThread] DEBUG sip.SipManager  - received time out event: javax.sip.TimeoutEvent[source=gov.nist.javax.sip.SipProviderImpl@543e710e]
+2303472 [EventScannerThread] TRACE sip.SipManager  - [exit] processTimeout

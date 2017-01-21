@@ -1,0 +1,335 @@
+2533307 [AWT-EventQueue-0] TRACE communicator.SipCommunicator  - Entering handleDialRequest(UserCallInitiationEvent)
+2533307 [AWT-EventQueue-0] TRACE media.MediaManager  - [entry] generateSdpDescription
+2533307 [AWT-EventQueue-0] TRACE media.MediaManager  - [entry] getVideoPort
+2533307 [AWT-EventQueue-0] DEBUG common.PropertiesDepot  - getProperty[net.java.sip.communicator.media.VIDEO_PORT=22222]
+2533307 [AWT-EventQueue-0] TRACE media.MediaManager  - [exit] getVideoPort
+2533307 [AWT-EventQueue-0] TRACE common.NetworkAddressManager  - [entry] getPublicAddressFor
+2533307 [AWT-EventQueue-0] DEBUG common.NetworkAddressManager  - Stun is disabled, skipping mapped address recovery.
+2533307 [AWT-EventQueue-0] TRACE common.NetworkAddressManager  - [entry] getLocalHost
+2533307 [AWT-EventQueue-0] DEBUG common.PropertiesDepot  - getProperty[java.net.preferIPv4Stack=true]
+2533308 [AWT-EventQueue-0] DEBUG common.PropertiesDepot  - getProperty[java.net.preferIPv4Stack=true]
+2533354 [AWT-EventQueue-0] DEBUG common.NetworkAddressManager  - Found Linklocal ipv4 address /192.168.1.4
+2533354 [AWT-EventQueue-0] DEBUG common.NetworkAddressManager  - Returning link local address
+2533354 [AWT-EventQueue-0] TRACE common.NetworkAddressManager  - [exit] getLocalHost
+2533354 [AWT-EventQueue-0] TRACE common.NetworkAddressManager  - [exit] getPublicAddressFor
+2533354 [AWT-EventQueue-0] TRACE media.MediaManager  - [entry] getAudioPort
+2533354 [AWT-EventQueue-0] DEBUG common.PropertiesDepot  - getProperty[net.java.sip.communicator.media.AUDIO_PORT=22224]
+2533355 [AWT-EventQueue-0] TRACE media.MediaManager  - [exit] getAudioPort
+2533355 [AWT-EventQueue-0] TRACE common.NetworkAddressManager  - [entry] getPublicAddressFor
+2533355 [AWT-EventQueue-0] DEBUG common.NetworkAddressManager  - Stun is disabled, skipping mapped address recovery.
+2533355 [AWT-EventQueue-0] TRACE common.NetworkAddressManager  - [entry] getLocalHost
+2533355 [AWT-EventQueue-0] DEBUG common.PropertiesDepot  - getProperty[java.net.preferIPv4Stack=true]
+2533355 [AWT-EventQueue-0] DEBUG common.PropertiesDepot  - getProperty[java.net.preferIPv4Stack=true]
+2533392 [AWT-EventQueue-0] DEBUG common.NetworkAddressManager  - Found Linklocal ipv4 address /192.168.1.4
+2533392 [AWT-EventQueue-0] DEBUG common.NetworkAddressManager  - Returning link local address
+2533392 [AWT-EventQueue-0] TRACE common.NetworkAddressManager  - [exit] getLocalHost
+2533392 [AWT-EventQueue-0] TRACE common.NetworkAddressManager  - [exit] getPublicAddressFor
+2533392 [AWT-EventQueue-0] DEBUG common.PropertiesDepot  - getProperty[user.name=konka]
+2533392 [AWT-EventQueue-0] TRACE media.MediaManager  - [entry] surfacePreferredEncodings
+2533392 [AWT-EventQueue-0] DEBUG common.PropertiesDepot  - getProperty[net.java.sip.communicator.media.PREFERRED_AUDIO_ENCODING=0]
+2533392 [AWT-EventQueue-0] DEBUG common.PropertiesDepot  - getProperty[net.java.sip.communicator.media.PREFERRED_VIDEO_ENCODING=26]
+2533392 [AWT-EventQueue-0] DEBUG media.MediaManager  - Encoding  [ULAW/rtp] is set as preferred.
+2533392 [AWT-EventQueue-0] TRACE media.MediaManager  - [exit] surfacePreferredEncodings
+2533392 [AWT-EventQueue-0] TRACE media.MediaManager  - [entry] surfacePreferredEncodings
+2533392 [AWT-EventQueue-0] DEBUG common.PropertiesDepot  - getProperty[net.java.sip.communicator.media.PREFERRED_AUDIO_ENCODING=0]
+2533392 [AWT-EventQueue-0] DEBUG common.PropertiesDepot  - getProperty[net.java.sip.communicator.media.PREFERRED_VIDEO_ENCODING=26]
+2533392 [AWT-EventQueue-0] DEBUG media.MediaManager  - Encoding  [jpeg/rtp] is set as preferred.
+2533392 [AWT-EventQueue-0] TRACE media.MediaManager  - [exit] surfacePreferredEncodings
+2533392 [AWT-EventQueue-0] DEBUG common.PropertiesDepot  - getProperty[net.java.sip.communicator.media.NO_AUDIO_DESCRIPTION_IN_SDP=null]
+2533392 [AWT-EventQueue-0] DEBUG common.PropertiesDepot  - getProperty[net.java.sip.communicator.media.NO_VIDEO_DESCRIPTION_IN_SDP=null]
+2533392 [AWT-EventQueue-0] DEBUG media.MediaManager  - Generated SDP - v=0
+o=konka 0 0 IN IP4 192.168.1.4
+s=-
+c=IN IP4 192.168.1.4
+t=0 0
+m=audio 22224 RTP/AVP 0 3 4 5 6 8 15 18
+m=video 22222 RTP/AVP 26 34 31
+a=recvonly
+
+2533393 [AWT-EventQueue-0] TRACE media.MediaManager  - [exit] generateSdpDescription
+2533393 [AWT-EventQueue-0] TRACE sip.SipManager  - [entry] establishCall
+2533393 [AWT-EventQueue-0] TRACE sip.CallProcessing  - [entry] invite
+2533393 [AWT-EventQueue-0] DEBUG common.PropertiesDepot  - getProperty[net.java.sip.communicator.sip.EXCESSIVE_URI_CHARACTERS=null]
+2533393 [AWT-EventQueue-0] DEBUG common.PropertiesDepot  - getProperty[net.java.sip.communicator.sipphone.IS_RUNNING_SIPPHONE=false]
+2533393 [AWT-EventQueue-0] DEBUG common.PropertiesDepot  - getProperty[net.java.sip.communicator.sip.DEFAULT_DOMAIN_NAME=192.168.1.11:4000]
+2533393 [AWT-EventQueue-0] TRACE sip.SipManager  - [entry] getFromHeader
+2533393 [AWT-EventQueue-0] TRACE sip.SipManager  - [exit] getFromHeader
+2533393 [AWT-EventQueue-0] TRACE sip.SipManager  - [entry] getLocalViaHeaders
+2533393 [AWT-EventQueue-0] TRACE sip.SipManager  - [exit] getLocalViaHeaders
+2533393 [AWT-EventQueue-0] TRACE sip.SipManager  - [entry] getMaxForwardsHeader
+2533393 [AWT-EventQueue-0] TRACE sip.SipManager  - [exit] getMaxForwardsHeader
+2533393 [AWT-EventQueue-0] TRACE sip.SipManager  - [entry] getContactHeader
+2533393 [AWT-EventQueue-0] TRACE sip.SipManager  - [exit] getContactHeader
+hop = 192.168.1.11:4000/UDP
+<message
+from="192.168.1.4:5060" 
+to="192.168.1.11:4000" 
+time="1484920224676" 
+isSender="true" 
+transactionId="z9hg4bk33b3f8bcff70febc1954a049ec1f6461" 
+callId="0284bf771b7e744bca09e14b09532cdd@192.168.1.4" 
+firstLine="INVITE sip:dfs@192.168.1.11:4000 SIP/2.0" 
+debugLine="0" 
+>
+<![CDATA[INVITE sip:dfs@192.168.1.11:4000 SIP/2.0
+Call-ID: 0284bf771b7e744bca09e14b09532cdd@192.168.1.4
+CSeq: 1 INVITE
+From: "user" <sip:le_pipas@192.168.1.11:4000;transport=udp>;tag=2012846597
+To: <sip:dfs@192.168.1.11:4000>
+Via: SIP/2.0/UDP 192.168.1.4:5060;branch=z9hG4bK33b3f8bcff70febc1954a049ec1f6461
+Max-Forwards: 70
+Contact: "user" <sip:192.168.1.4:5060;transport=udp>
+Content-Type: application/sdp
+Content-Length: 156
+
+]]>
+</message>
+
+2533394 [AWT-EventQueue-0] DEBUG sip.CallProcessing  - sent request: INVITE sip:dfs@192.168.1.11:4000 SIP/2.0
+Call-ID: 0284bf771b7e744bca09e14b09532cdd@192.168.1.4
+CSeq: 1 INVITE
+From: "user" <sip:le_pipas@192.168.1.11:4000;transport=udp>;tag=2012846597
+To: <sip:dfs@192.168.1.11:4000>
+Via: SIP/2.0/UDP 192.168.1.4:5060;branch=z9hG4bK33b3f8bcff70febc1954a049ec1f6461
+Max-Forwards: 70
+Contact: "user" <sip:192.168.1.4:5060;transport=udp>
+Content-Type: application/sdp
+Content-Length: 156
+
+v=0
+o=konka 0 0 IN IP4 192.168.1.4
+s=-
+c=IN IP4 192.168.1.4
+t=0 0
+m=audio 22224 RTP/AVP 0 3 4 5 6 8 15 18
+m=video 22222 RTP/AVP 26 34 31
+a=recvonly
+
+2533394 [AWT-EventQueue-0] TRACE sip.CallDispatcher  - [entry] createCall
+2533394 [AWT-EventQueue-0] DEBUG sip.CallDispatcher  - created call[ Call 1361864657
+from dfs@sip:dfs@192.168.1.11:4000
+SDP:null]
+2533394 [AWT-EventQueue-0] TRACE sip.CallDispatcher  - [exit] createCall
+2533395 [AWT-EventQueue-0] TRACE sip.Call  - [entry] setState
+2533395 [AWT-EventQueue-0] DEBUG sip.Call  - setting call status to Dialing
+2533395 [AWT-EventQueue-0] TRACE sip.Call  - [exit] setState
+2533395 [AWT-EventQueue-0] TRACE sip.CallProcessing  - [exit] invite
+2533395 [AWT-EventQueue-0] TRACE sip.SipManager  - [exit] establishCall
+2533395 [AWT-EventQueue-0] TRACE communicator.SipCommunicator  - [exit] handleDialRequest
+<message
+from="192.168.1.11:4000" 
+to="192.168.1.4:5060" 
+time="1484920224707" 
+isSender="false" 
+statusMessage="normal processing" 
+transactionId="z9hg4bk33b3f8bcff70febc1954a049ec1f6461" 
+firstLine="SIP/2.0 180 Ringing" 
+callId="0284bf771b7e744bca09e14b09532cdd@192.168.1.4" 
+debugLine="0" 
+>
+<![CDATA[SIP/2.0 180 Ringing
+Call-ID: 0284bf771b7e744bca09e14b09532cdd@192.168.1.4
+CSeq: 1 INVITE
+From: "user" <sip:le_pipas@192.168.1.11:4000;transport=udp>;tag=2012846597
+To: <sip:dfs@192.168.1.11:4000>;tag=807536822
+Via: SIP/2.0/UDP 192.168.1.4:5060;branch=z9hG4bK33b3f8bcff70febc1954a049ec1f6461
+Max-Forwards: 69
+Record-Route: <sip:192.168.1.11:4000>
+Content-Length: 0
+
+]]>
+</message>
+
+2533426 [EventScannerThread] TRACE sip.SipManager  - [entry] processResponse
+2533426 [EventScannerThread] DEBUG sip.SipManager  - received response=javax.sip.ResponseEvent[source=gov.nist.javax.sip.SipProviderImpl@543e710e]
+2533426 [EventScannerThread] TRACE sip.CallProcessing  - [entry] processTrying
+2533426 [EventScannerThread] TRACE sip.CallDispatcher  - [entry] findCall
+2533426 [EventScannerThread] TRACE sip.CallDispatcher  - [exit] findCall
+2533426 [EventScannerThread] TRACE sip.Call  - [entry] setState
+2533426 [EventScannerThread] TRACE sip.Call  - [exit] setState
+2533426 [EventScannerThread] TRACE sip.CallProcessing  - [exit] processTrying
+2533426 [EventScannerThread] TRACE sip.SipManager  - [exit] processResponse
+<message
+from="192.168.1.11:4000" 
+to="192.168.1.4:5060" 
+time="1484920226003" 
+isSender="false" 
+statusMessage="normal processing" 
+transactionId="z9hg4bk33b3f8bcff70febc1954a049ec1f6461" 
+firstLine="SIP/2.0 200 OK" 
+callId="0284bf771b7e744bca09e14b09532cdd@192.168.1.4" 
+debugLine="0" 
+>
+<![CDATA[SIP/2.0 200 OK
+Call-ID: 0284bf771b7e744bca09e14b09532cdd@192.168.1.4
+CSeq: 1 INVITE
+From: "user" <sip:le_pipas@192.168.1.11:4000;transport=udp>;tag=2012846597
+To: <sip:dfs@192.168.1.11:4000>;tag=807536822
+Via: SIP/2.0/UDP 192.168.1.4:5060;branch=z9hG4bK33b3f8bcff70febc1954a049ec1f6461
+Max-Forwards: 69
+Record-Route: <sip:192.168.1.11:4000>
+Content-Type: application/sdp
+Contact: "dfs" <sip:192.168.1.11:5060;transport=udp>
+Content-Length: 160
+
+]]>
+</message>
+
+2534724 [EventScannerThread] TRACE sip.SipManager  - [entry] processResponse
+2534724 [EventScannerThread] DEBUG sip.SipManager  - received response=javax.sip.ResponseEvent[source=gov.nist.javax.sip.SipProviderImpl@543e710e]
+2534725 [EventScannerThread] TRACE sip.CallProcessing  - [entry] processInviteOK
+2534725 [EventScannerThread] TRACE sip.CallDispatcher  - [entry] findCall
+2534725 [EventScannerThread] TRACE sip.CallDispatcher  - [exit] findCall
+<message
+from="192.168.1.4:5060" 
+to="192.168.1.11:4000" 
+time="1484920226009" 
+isSender="true" 
+transactionId="3139322e3136382e312e343a3530363" 
+callId="0284bf771b7e744bca09e14b09532cdd@192.168.1.4" 
+firstLine="ACK sip:192.168.1.11:4000;transport=udp SIP/2.0" 
+debugLine="0" 
+>
+<![CDATA[ACK sip:192.168.1.11:4000;transport=udp SIP/2.0
+Call-ID: 0284bf771b7e744bca09e14b09532cdd@192.168.1.4
+CSeq: 1 ACK
+From: "user" <sip:le_pipas@192.168.1.11:4000;transport=udp>;tag=2012846597
+To: <sip:dfs@192.168.1.11:4000>;tag=807536822
+Via: SIP/2.0/UDP 192.168.1.4:5060;branch=3139322e3136382e312e343a3530363
+Max-Forwards: 70
+Route: "dfs" <sip:192.168.1.11:5060;transport=udp>
+Content-Length: 0
+
+]]>
+</message>
+
+2534729 [EventScannerThread] DEBUG sip.Call  - setting remote description to [v=0
+o=thymios 0 0 IN IP4 192.168.1.11
+s=-
+c=IN IP4 192.168.1.11
+t=0 0
+m=audio 22224 RTP/AVP 0 3 4 5 6 8 15 18
+m=video 22222 RTP/AVP 26 34 31
+a=recvonly
+]
+2534729 [EventScannerThread] TRACE sip.Call  - [entry] setState
+2534729 [EventScannerThread] DEBUG sip.Call  - setting call status to Connected
+2534729 [EventScannerThread] TRACE communicator.Interlocutor  - [entry] callStateChanged
+2534729 [EventScannerThread] TRACE communicator.Interlocutor  - [exit] callStateChanged
+2534729 [EventScannerThread] TRACE communicator.SipCommunicator  - [entry] callStateChanged
+2534729 [EventScannerThread] TRACE media.MediaManager  - [entry] openMediaStreams
+2534729 [EventScannerThread] DEBUG media.MediaManager  - sdpData arg - v=0
+o=thymios 0 0 IN IP4 192.168.1.11
+s=-
+c=IN IP4 192.168.1.11
+t=0 0
+m=audio 22224 RTP/AVP 0 3 4 5 6 8 15 18
+m=video 22222 RTP/AVP 26 34 31
+a=recvonly
+
+2534731 [EventScannerThread] TRACE media.MediaManager  - [entry] extractTransmittableJmfFormats
+2534731 [EventScannerThread] TRACE media.MediaManager  - [exit] extractTransmittableJmfFormats
+2534731 [EventScannerThread] TRACE media.MediaManager  - [entry] startReceiver
+2534731 [EventScannerThread] TRACE media.MediaManager  - [entry] getAudioPort
+2534731 [EventScannerThread] DEBUG common.PropertiesDepot  - getProperty[net.java.sip.communicator.media.AUDIO_PORT=22224]
+2534731 [EventScannerThread] TRACE media.MediaManager  - [exit] getAudioPort
+2534731 [EventScannerThread] DEBUG common.PropertiesDepot  - getProperty[net.java.sip.communicator.media.RECEIVER_BIND_RETRIES=null]
+2534731 [EventScannerThread] TRACE media.AVReceiver  - [entry] initialize
+2534731 [EventScannerThread] TRACE media.AVReceiver$SessionLabel  - [entry] <init>
+2534731 [EventScannerThread] TRACE media.AVReceiver$SessionLabel  - [exit] <init>
+2534731 [EventScannerThread] DEBUG media.AVReceiver  -  Start listening for RTP @ addr: 192.168.1.11 port: 22224 ttl: 1
+2534731 [EventScannerThread] TRACE media.MediaManager  - [entry] getLocalHost
+2534731 [EventScannerThread] DEBUG common.PropertiesDepot  - getProperty[net.java.sip.communicator.media.IP_ADDRESS=192.168.1.4]
+2534731 [EventScannerThread] DEBUG media.MediaManager  - returning - 192.168.1.4
+2534732 [EventScannerThread] TRACE media.MediaManager  - [exit] getLocalHost
+2534733 [EventScannerThread] TRACE media.MediaManager  - [entry] getLocalHost
+2534733 [EventScannerThread] DEBUG common.PropertiesDepot  - getProperty[net.java.sip.communicator.media.IP_ADDRESS=192.168.1.4]
+2534733 [EventScannerThread] DEBUG media.MediaManager  - returning - 192.168.1.4
+2534734 [EventScannerThread] TRACE media.MediaManager  - [exit] getLocalHost
+2534734 [EventScannerThread] TRACE media.MediaManager  - [entry] getLocalHost
+2534734 [EventScannerThread] DEBUG common.PropertiesDepot  - getProperty[net.java.sip.communicator.media.IP_ADDRESS=192.168.1.4]
+2534734 [EventScannerThread] DEBUG media.MediaManager  - returning - 192.168.1.4
+2534734 [EventScannerThread] TRACE media.MediaManager  - [exit] getLocalHost
+2534735 [EventScannerThread] DEBUG common.PropertiesDepot  - getProperty[net.java.sip.communicator.media.MEDIA_BUFFER_LENGTH=100]
+2534735 [EventScannerThread] DEBUG media.AVReceiver  - MEDIA_BUFFER_LENGTH length is set to 350
+2534748 [EventScannerThread] TRACE media.AVReceiver  - [exit] initialize
+2534748 [EventScannerThread] TRACE media.MediaManager  - [exit] startReceiver
+2534748 [EventScannerThread] TRACE media.MediaManager  - [entry] startTransmitter
+2534750 [EventScannerThread] TRACE media.AVTransmitter  - [entry] <init>
+2534750 [EventScannerThread] DEBUG media.AVTransmitter  - Created transmitter for: [192.168.1.11] at ports: [22224] encoded as: [[ULAW/rtp, gsm/rtp, g723/rtp, dvi/rtp, dvi/rtp, alaw, g728/rtp, g729/rtp]]
+2534750 [EventScannerThread] TRACE media.AVTransmitter  - [exit] <init>
+2534750 [EventScannerThread] DEBUG media.MediaManager  - Starting transmission.
+2534750 [EventScannerThread] TRACE media.AVTransmitter  - [entry] start
+2534750 [EventScannerThread] TRACE media.AVTransmitter  - [entry] configureProcessor
+2534751 [EventScannerThread] DEBUG media.AVTransmitter  - Available encodings are:
+2534751 [EventScannerThread] DEBUG media.AVTransmitter  - track[1] format[1]=dvi/rtp
+2534751 [EventScannerThread] DEBUG media.AVTransmitter  - track[1] format[2]=dvi/rtp
+2534751 [EventScannerThread] DEBUG media.AVTransmitter  - track[1] format[3]=dvi/rtp
+2534751 [EventScannerThread] DEBUG media.AVTransmitter  - track[1] format[4]=g723/rtp
+2534751 [EventScannerThread] DEBUG media.AVTransmitter  - track[1] format[5]=gsm/rtp
+2534751 [EventScannerThread] DEBUG media.AVTransmitter  - track[1] format[6]=ULAW/rtp
+2534751 [EventScannerThread] DEBUG media.AVTransmitter  - track[1] format[7]=mpegaudio/rtp
+2534751 [EventScannerThread] DEBUG media.AVTransmitter  - track[1] format[8]=mpegaudio/rtp
+2534751 [EventScannerThread] DEBUG media.AVTransmitter  - track[1] format[9]=mpegaudio/rtp
+2534751 [EventScannerThread] DEBUG media.AVTransmitter  - track[1] format[10]=mpegaudio/rtp
+2534751 [EventScannerThread] DEBUG media.AVTransmitter  - track[1] format[11]=mpegaudio/rtp
+2534751 [EventScannerThread] DEBUG media.AVTransmitter  - track[1] format[12]=mpegaudio/rtp
+2534751 [EventScannerThread] DEBUG media.AVTransmitter  - track[1] format[13]=mpegaudio/rtp
+2534751 [EventScannerThread] TRACE media.AVTransmitter  - [entry] findFirstMatchingFormat
+2534751 [EventScannerThread] TRACE media.AVTransmitter  - [exit] findFirstMatchingFormat
+2534751 [EventScannerThread] DEBUG media.AVTransmitter  - Track 0 is set to transmit as: ULAW/rtp, 8000.0 Hz, 8-bit, Mono, FrameSize=8 bits
+2534751 [EventScannerThread] TRACE media.AVTransmitter  - [entry] setJPEGQuality
+2534751 [EventScannerThread] TRACE media.AVTransmitter  - [exit] setJPEGQuality
+2534751 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [entry] controllerUpdate
+2534751 [EventScannerThread] TRACE media.AVTransmitter  - [exit] configureProcessor
+2534751 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [exit] controllerUpdate
+2534751 [EventScannerThread] TRACE media.AVTransmitter  - [entry] createTransmitter
+2534751 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [entry] controllerUpdate
+2534751 [EventScannerThread] DEBUG media.AVTransmitter  - data sources - 1
+2534751 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [exit] controllerUpdate
+2534751 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [entry] controllerUpdate
+2534751 [EventScannerThread] TRACE media.AVTransmitter  - [entry] findIPAddressForFormat
+2534752 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [exit] controllerUpdate
+2534752 [EventScannerThread] TRACE media.AVTransmitter  - [exit] findIPAddressForFormat
+2534752 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [entry] controllerUpdate
+2534752 [EventScannerThread] TRACE media.AVTransmitter  - [entry] findPortForFormat
+2534752 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [exit] controllerUpdate
+2534752 [EventScannerThread] TRACE media.AVTransmitter  - [exit] findPortForFormat
+2534752 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [entry] controllerUpdate
+2534752 [EventScannerThread] TRACE media.MediaManager  - [entry] getLocalHost
+2534752 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [exit] controllerUpdate
+2534752 [EventScannerThread] DEBUG common.PropertiesDepot  - getProperty[net.java.sip.communicator.media.IP_ADDRESS=192.168.1.4]
+2534752 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [entry] controllerUpdate
+2534752 [EventScannerThread] DEBUG media.MediaManager  - returning - 192.168.1.4
+2534752 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [exit] controllerUpdate
+2534752 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [entry] controllerUpdate
+2534752 [EventScannerThread] TRACE media.MediaManager  - [exit] getLocalHost
+2534752 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [exit] controllerUpdate
+2534752 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [entry] controllerUpdate
+2534752 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [exit] controllerUpdate
+2534753 [EventScannerThread] DEBUG media.AVTransmitter  - Started transmitting track 0 encoded as ULAW/rtp @ [192.168.1.11]:22224!
+2534753 [RTPEventHandler] DEBUG media.AVReceiver  - received the following JMF Session event - javax.media.rtp.event.NewSendStreamEvent
+2534753 [EventScannerThread] TRACE media.AVTransmitter  - [exit] createTransmitter
+2534753 [EventScannerThread] TRACE media.AVTransmitter  - [exit] start
+2534753 [EventScannerThread] TRACE media.MediaManager  - [exit] startTransmitter
+2534753 [EventScannerThread] TRACE media.MediaManager  - [exit] openMediaStreams
+2534754 [EventScannerThread] TRACE communicator.SipCommunicator  - [exit] callStateChanged
+2534754 [EventScannerThread] TRACE sip.Call  - [exit] setState
+2534754 [EventScannerThread] TRACE sip.CallProcessing  - [exit] processInviteOK
+2534754 [EventScannerThread] TRACE sip.SipManager  - [exit] processResponse
+2534754 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [entry] controllerUpdate
+2534755 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [exit] controllerUpdate
+2534756 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [entry] controllerUpdate
+2534756 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [exit] controllerUpdate
+2534756 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [entry] controllerUpdate
+2534756 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [exit] controllerUpdate
+2534756 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [entry] controllerUpdate
+2534756 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [exit] controllerUpdate
+2534756 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [entry] controllerUpdate
+2534756 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [exit] controllerUpdate
+2534756 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [entry] controllerUpdate
+2534756 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [exit] controllerUpdate
+2534756 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [entry] controllerUpdate
+2534756 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [exit] controllerUpdate
+2534756 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [entry] controllerUpdate
+2534756 [JMF thread: SendEventQueue: com.sun.media.processor.unknown.Handler] TRACE media.AVTransmitter  - [exit] controllerUpdate
