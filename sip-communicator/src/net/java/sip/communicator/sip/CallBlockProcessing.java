@@ -2,13 +2,11 @@ package net.java.sip.communicator.sip;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Timer;
 
 import javax.sip.ClientTransaction;
 import javax.sip.InvalidArgumentException;
 import javax.sip.TransactionUnavailableException;
 import javax.sip.address.Address;
-import javax.sip.address.SipURI;
 import javax.sip.address.URI;
 import javax.sip.header.CSeqHeader;
 import javax.sip.header.CallIdHeader;
@@ -22,15 +20,14 @@ import javax.sip.message.Response;
 
 import net.java.sip.communicator.common.Console;
 
-public class CallForwardProcessing {
-	
+public class CallBlockProcessing {
 	private static final Console console =
-	        Console.getConsole(CallForwardProcessing.class);
+	        Console.getConsole(CallBlockProcessing.class);
 	private SipManager sipManCallback = null;
-	private Request forwardRequest = null;
+	private Request blockRequest = null;
 	private boolean forwardeeURI = false;
 
-	CallForwardProcessing(SipManager sipManCallback)
+	CallBlockProcessing(SipManager sipManCallback)
     {
         this.sipManCallback = sipManCallback;
     }
@@ -40,7 +37,7 @@ public class CallForwardProcessing {
         this.sipManCallback = sipManCallback;
     }
     
-    void forwardOK(ClientTransaction clientTransaction, Response response)
+    void blockOK(ClientTransaction clientTransaction, Response response)
     {
         try {
             console.logEntry();
@@ -60,37 +57,19 @@ public class CallForwardProcessing {
         }
     }
     
-    /**
-     * Create URI from Address 
-     * @param addressToForward
-     * @return
-     * @throws CommunicationsException
-     */
-    URI createUriFromAddress(String addressToForward) throws CommunicationsException
-    {
-    	URI requestURI;
-    	try {
-            requestURI = sipManCallback.addressFactory.createURI(addressToForward);
-        }
-        catch (ParseException ex) {
-            console.error(addressToForward + " is not a legal SIP uri!", ex);
-            throw new CommunicationsException(addressToForward +
-                                              " is not a legal SIP uri!", ex);
-        }
-    	return requestURI;
-    }
+    
     
 	
-	synchronized void forward(String registrarAddress, int registrarPort,
-            String registrarTransport, int expires, String addressToForward) throws
+	synchronized void block(String registrarAddress, int registrarPort,
+            String registrarTransport, int expires, String addressToBlock) throws
 	   CommunicationsException
 	{
 	  try
 	  {
 	      console.logEntry();
-	      console.debug("Address to forward: " + addressToForward);
+	      console.debug("Address to block: " + addressToBlock);
 	      
-	      //From
+	      //Get the From Header and address
 	      FromHeader fromHeader = sipManCallback.getFromHeader();
 	      Address fromAddress = fromHeader.getAddress();
 	      console.debug("From Header: " + fromHeader);
@@ -99,7 +78,9 @@ public class CallForwardProcessing {
 	       * TODO: GUI CALL Fix later
 	       */
 	      //sipManCallback.fireRegistering(fromAddress.toString());
-	      URI requestURI = ProcessingUtilities.createUriFromAddress(addressToForward, sipManCallback, console);
+	      
+	      //Make the blockee address in a URI
+          URI requestURI = ProcessingUtilities.createUriFromAddress(addressToBlock, sipManCallback, console);
 	      CallIdHeader callIdHeader = sipManCallback.sipProvider.getNewCallId();
 	      CSeqHeader cSeqHeader = ProcessingUtilities.safeCSeqHeader(1, Request.UPDATE, sipManCallback, console);
 	      ToHeader toHeader = ProcessingUtilities.headerFromAddress(fromAddress, sipManCallback, console);
@@ -113,7 +94,7 @@ public class CallForwardProcessing {
 	      Request request = null;
 	      try {
 	          request = sipManCallback.messageFactory.createRequest(requestURI,
-	              "FORWARD ",
+	              "BLOCK ",
 	              callIdHeader,
 	              cSeqHeader, fromHeader, toHeader,
 	              viaHeaders,
@@ -158,25 +139,23 @@ public class CallForwardProcessing {
 	      
 	      console.debug(request);
 	      
-	      
-	      
 	      //Transaction
-	      ClientTransaction forwardTrans = null;
+	      ClientTransaction blockTrans = null;
 	      try {
-	    	  forwardTrans = sipManCallback.sipProvider.getNewClientTransaction(
+	    	  blockTrans = sipManCallback.sipProvider.getNewClientTransaction(
 	              request);
 	      }
 	      catch (TransactionUnavailableException ex) {
-	          console.error("Could not create a forward transaction!\n"
+	          console.error("Could not create a block transaction!\n"
 	                        + "Check that the Registrar address is correct!",
 	                        ex);
 	          //throw was missing - reported by Eero Vaarnas
 	          throw new CommunicationsException(
-	              "Could not create a forward transaction!\n"
+	              "Could not create a block transaction!\n"
 	              + "Check that the Registrar address is correct!");
 	      }
 	      try {
-	    	  forwardTrans.sendRequest();
+	    	  blockTrans.sendRequest();
 	          if( console.isDebugEnabled() )
 	              console.debug("sent request= " + request);
 	          //[issue 2] Schedule re registrations
@@ -188,13 +167,13 @@ public class CallForwardProcessing {
 	      }
 	      //we sometimes get a null pointer exception here so catch them all
 	      catch (Exception ex) {
-	          console.error("Could not send out the forward request!", ex);
+	          console.error("Could not send out the block request!", ex);
 	          //throw was missing - reported by Eero Vaarnas
 	          throw new CommunicationsException(
-	              "Could not send out the forward request!", ex);
+	              "Could not send out the block request!", ex);
 	      }
-	      console.debug(forwardTrans);
-	      this.forwardRequest = request;
+	      console.debug(blockTrans);
+	      this.blockRequest = request;
 	      
 	  }
 	  finally
@@ -204,15 +183,16 @@ public class CallForwardProcessing {
 	
 	}
 	
-	synchronized void unforward(String registrarAddress, int registrarPort,
-            String registrarTransport, int expires) throws
+	synchronized void unblock(String registrarAddress, int registrarPort,
+            String registrarTransport, int expires, String addressToBlock) throws
 	   CommunicationsException
 	{
 	  try
 	  {
 	      console.logEntry();
+	      console.debug("Address to block: " + addressToBlock);
 	      
-	      //From
+	      //Get the From Header and address
 	      FromHeader fromHeader = sipManCallback.getFromHeader();
 	      Address fromAddress = fromHeader.getAddress();
 	      console.debug("From Header: " + fromHeader);
@@ -221,7 +201,9 @@ public class CallForwardProcessing {
 	       * TODO: GUI CALL Fix later
 	       */
 	      //sipManCallback.fireRegistering(fromAddress.toString());
-	      URI requestURI = ProcessingUtilities.createUriFromAddress(registrarAddress, sipManCallback, console);
+	      
+	      //Make the blockee address in a URI
+          URI requestURI = ProcessingUtilities.createUriFromAddress(addressToBlock, sipManCallback, console);
 	      CallIdHeader callIdHeader = sipManCallback.sipProvider.getNewCallId();
 	      CSeqHeader cSeqHeader = ProcessingUtilities.safeCSeqHeader(1, Request.UPDATE, sipManCallback, console);
 	      ToHeader toHeader = ProcessingUtilities.headerFromAddress(fromAddress, sipManCallback, console);
@@ -235,7 +217,7 @@ public class CallForwardProcessing {
 	      Request request = null;
 	      try {
 	          request = sipManCallback.messageFactory.createRequest(requestURI,
-	              "UNFORWARD ",
+	              "UNBLOCK ",
 	              callIdHeader,
 	              cSeqHeader, fromHeader, toHeader,
 	              viaHeaders,
@@ -280,25 +262,23 @@ public class CallForwardProcessing {
 	      
 	      console.debug(request);
 	      
-	      
-	      
 	      //Transaction
-	      ClientTransaction forwardTrans = null;
+	      ClientTransaction blockTrans = null;
 	      try {
-	    	  forwardTrans = sipManCallback.sipProvider.getNewClientTransaction(
+	    	  blockTrans = sipManCallback.sipProvider.getNewClientTransaction(
 	              request);
 	      }
 	      catch (TransactionUnavailableException ex) {
-	          console.error("Could not create a forward transaction!\n"
+	          console.error("Could not create a block transaction!\n"
 	                        + "Check that the Registrar address is correct!",
 	                        ex);
 	          //throw was missing - reported by Eero Vaarnas
 	          throw new CommunicationsException(
-	              "Could not create a forward transaction!\n"
+	              "Could not create a block transaction!\n"
 	              + "Check that the Registrar address is correct!");
 	      }
 	      try {
-	    	  forwardTrans.sendRequest();
+	    	  blockTrans.sendRequest();
 	          if( console.isDebugEnabled() )
 	              console.debug("sent request= " + request);
 	          //[issue 2] Schedule re registrations
@@ -310,13 +290,13 @@ public class CallForwardProcessing {
 	      }
 	      //we sometimes get a null pointer exception here so catch them all
 	      catch (Exception ex) {
-	          console.error("Could not send out the forward request!", ex);
+	          console.error("Could not send out the block request!", ex);
 	          //throw was missing - reported by Eero Vaarnas
 	          throw new CommunicationsException(
-	              "Could not send out the forward request!", ex);
+	              "Could not send out the block request!", ex);
 	      }
-	      console.debug(forwardTrans);
-	      this.forwardRequest = request;
+	      console.debug(blockTrans);
+	      this.blockRequest = request;
 	      
 	  }
 	  finally
