@@ -190,6 +190,12 @@ public class SipManager
      * establishing, managing, and terminating calls.
      */
     CallProcessing callProcessing = null;
+    
+    /**
+     * The instance that handles all call forwarding associated activity such as
+     * asking to call forward to someone or asking to not forward calls anymore.
+     */
+    CallForwardProcessing callForwardProcessing = null;
 
     /**
      * The instance that handles subscriptions.
@@ -236,6 +242,7 @@ public class SipManager
     {
         registerProcessing    = new RegisterProcessing(this);
         callProcessing        = new CallProcessing(this);
+        callForwardProcessing = new CallForwardProcessing(this);
         watcher               = new Watcher(this);
         presenceAgent         = new PresenceAgent(this);
         presenceStatusManager = new PresenceStatusManager(this);
@@ -482,6 +489,79 @@ public class SipManager
     {
         this.currentlyUsedURI = uri;
     }
+    
+    public String checkAndCompleteAddress(String publicAddress)
+    {
+    	console.logEntry();
+    	
+    	if(publicAddress == null || publicAddress.trim().length() == 0)
+            return ""; //maybe throw an exception?
+
+
+        //Handle default domain name (i.e. transform 1234 -> 1234@sip.com
+        String defaultDomainName =
+            Utils.getProperty("net.java.sip.communicator.sip.DEFAULT_DOMAIN_NAME");
+
+        //feature request, Michael Robertson (sipphone.com)
+        //strip the following chars of their user names: ( - ) <space>
+        if(publicAddress.toLowerCase().indexOf("sipphone.com") != -1
+           || defaultDomainName.indexOf("sipphone.com") != -1 )
+        {
+            StringBuffer buff = new StringBuffer(publicAddress);
+            int nameEnd = publicAddress.indexOf('@');
+            nameEnd = nameEnd==-1?Integer.MAX_VALUE:nameEnd;
+            nameEnd = Math.min(nameEnd, buff.length())-1;
+
+            int nameStart = publicAddress.indexOf("sip:");
+            nameStart = nameStart == -1 ? 0 : nameStart + "sip:".length();
+
+            for(int i = nameEnd; i >= nameStart; i--)
+                if(!Character.isLetter( buff.charAt(i) )
+                   && !Character.isDigit( buff.charAt(i)))
+                    buff.deleteCharAt(i);
+            publicAddress = buff.toString();
+        }
+
+
+        // if user didn't provide a domain name in the URL and someone
+        // has defined the DEFAULT_DOMAIN_NAME property - let's fill in the blank.
+        if (defaultDomainName != null
+            && publicAddress.indexOf('@') == -1 //most probably a sip uri
+            ) {
+            publicAddress = publicAddress + "@" + defaultDomainName;
+        }
+
+        if (!publicAddress.trim().toLowerCase().startsWith("sip:")) {
+            publicAddress = "sip:" + publicAddress;
+        }
+        console.logExit();
+        
+        return publicAddress;
+    }
+    
+    
+    public void forward(String addressToForward) throws CommunicationsException
+    {
+    	try {
+    		console.logEntry();
+    		
+    		/** 
+    		 * I would suggest this checks to be in a generic checkAndCompleteAddress function 
+    		 */
+    		console.debug(addressToForward);
+    		
+    		addressToForward = checkAndCompleteAddress(addressToForward);
+    		
+    		console.debug(addressToForward);
+    	
+            callForwardProcessing.forward( registrarAddress, registrarPort,
+                                  registrarTransport, registrationsExpiration, addressToForward);
+
+    		}
+    	finally {
+    		console.logExit();
+    	}
+    }
 
     /**
      * Causes the RegisterProcessing object to send a registration request
@@ -508,49 +588,9 @@ public class SipManager
     {
         try {
             console.logEntry();
+            console.debug(publicAddress);
 
-
-
-            if(publicAddress == null || publicAddress.trim().length() == 0)
-                return; //maybe throw an exception?
-
-
-            //Handle default domain name (i.e. transform 1234 -> 1234@sip.com
-            String defaultDomainName =
-                Utils.getProperty("net.java.sip.communicator.sip.DEFAULT_DOMAIN_NAME");
-
-            //feature request, Michael Robertson (sipphone.com)
-            //strip the following chars of their user names: ( - ) <space>
-            if(publicAddress.toLowerCase().indexOf("sipphone.com") != -1
-               || defaultDomainName.indexOf("sipphone.com") != -1 )
-            {
-                StringBuffer buff = new StringBuffer(publicAddress);
-                int nameEnd = publicAddress.indexOf('@');
-                nameEnd = nameEnd==-1?Integer.MAX_VALUE:nameEnd;
-                nameEnd = Math.min(nameEnd, buff.length())-1;
-
-                int nameStart = publicAddress.indexOf("sip:");
-                nameStart = nameStart == -1 ? 0 : nameStart + "sip:".length();
-
-                for(int i = nameEnd; i >= nameStart; i--)
-                    if(!Character.isLetter( buff.charAt(i) )
-                       && !Character.isDigit( buff.charAt(i)))
-                        buff.deleteCharAt(i);
-                publicAddress = buff.toString();
-            }
-
-
-            // if user didn't provide a domain name in the URL and someone
-            // has defined the DEFAULT_DOMAIN_NAME property - let's fill in the blank.
-            if (defaultDomainName != null
-                && publicAddress.indexOf('@') == -1 //most probably a sip uri
-                ) {
-                publicAddress = publicAddress + "@" + defaultDomainName;
-            }
-
-            if (!publicAddress.trim().toLowerCase().startsWith("sip:")) {
-                publicAddress = "sip:" + publicAddress;
-            }
+            publicAddress = checkAndCompleteAddress(publicAddress);
 
             this.currentlyUsedURI = publicAddress;
             registerProcessing.register( registrarAddress, registrarPort,
