@@ -95,6 +95,7 @@ class PhoneFrame
     GridLayout gridLayout1 = new GridLayout();
     Border border6;
     Border border7;
+    Border border71;
     Border border8;
     JTable participantsTable = new JTable(30, 3);
     JMenuBar jMenuBar1 = new net.java.sip.communicator.gui.MenuBar();
@@ -113,10 +114,26 @@ class PhoneFrame
 
     private GuiManager guiManCallback = null;
     BorderLayout borderLayout4 = new BorderLayout();
+    BorderLayout borderLayout41 = new BorderLayout();
+    
+    /**
+     * Dial GUI 
+     */
     JPanel dialPanel = new JPanel();
     JButton dialButton = new JButton();
     JComboBox contactBox = new JComboBox();
-
+    
+    /**
+     * Call Forward GUI 
+     */
+    JPanel forwardPanel = new JPanel();
+    JButton forwardButton = new JButton();
+    JButton disableForwardButton = new JButton();
+    JComboBox forwardBox = new JComboBox();
+    
+    BorderLayout borderLayoutDialForward = new BorderLayout();
+    JPanel dialAndForwardPanel = new JPanel();
+    
     public PhoneFrame(GuiManager guiManCallback) //throws HeadlessException
     {
         try {
@@ -136,6 +153,49 @@ class PhoneFrame
             e.printStackTrace();
         }
     }
+    
+    private void setupDialAndForwardPanel() throws Exception{
+    	borderLayoutDialForward.setHgap(10);
+        dialAndForwardPanel.setLayout(borderLayoutDialForward);
+        dialAndForwardPanel.setBorder(border8);
+        
+        borderLayout4.setHgap(10);
+        dialPanel.setLayout(borderLayout4);
+        dialPanel.setBorder(border7);
+        dialButton.setEnabled(false);
+        dialButton.setMnemonic('D');
+        dialButton.setText("Dial");
+        
+        contactBox.setBorder(null);
+        contactBox.setDebugGraphicsOptions(0);
+        contactBox.setActionMap(null);
+        contactBox.setEditable(true);
+        
+        borderLayout41.setHgap(10);
+        forwardPanel.setLayout(borderLayout41);
+        forwardPanel.setBorder(border71);
+        
+        forwardButton.setEnabled(false);
+        forwardButton.setMnemonic('F');
+        forwardButton.setText("Forward");
+        disableForwardButton.setEnabled(false);
+        disableForwardButton.setMnemonic('D');
+        disableForwardButton.setText("Dis. Forw.");
+
+        
+        this.getContentPane().add(dialAndForwardPanel, BorderLayout.NORTH);
+        dialAndForwardPanel.add(dialPanel, BorderLayout.NORTH);
+        
+        dialPanel.add(dialButton, BorderLayout.EAST);
+        dialPanel.add(contactBox, BorderLayout.CENTER);
+        
+        
+        dialAndForwardPanel.add(forwardPanel, BorderLayout.SOUTH);
+        
+        forwardPanel.add(forwardButton, BorderLayout.EAST);
+        forwardPanel.add(disableForwardButton, BorderLayout.WEST);
+        
+    }
 
     private void jbInit() throws Exception
     {
@@ -153,7 +213,10 @@ class PhoneFrame
         border5 = BorderFactory.createEmptyBorder(5, 5, 5, 5);
         border6 = BorderFactory.createEmptyBorder(5, 5, 5, 5);
         border7 = BorderFactory.createEmptyBorder(5, 5, 5, 5);
+        border71 = BorderFactory.createEmptyBorder(5, 5, 5, 5);
         border8 = BorderFactory.createEmptyBorder(5, 5, 5, 5);
+        border9 = BorderFactory.createEmptyBorder(10, 10, 10, 10);
+        
         border14 = BorderFactory.createEmptyBorder(4, 0, 0, 0);
         this.getContentPane().setLayout(borderLayout1);
         splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
@@ -191,16 +254,9 @@ class PhoneFrame
         registrationLabel.setText("Not Registered");
         statusPanel.setLayout(borderLayout5);
 //        participantsTable.setMinimumSize(new Dimension(45, 300));
-        borderLayout4.setHgap(10);
-        dialPanel.setLayout(borderLayout4);
-        dialPanel.setBorder(border7);
-        dialButton.setEnabled(false);
-        dialButton.setMnemonic('D');
-        dialButton.setText("Dial");
-        contactBox.setBorder(null);
-        contactBox.setDebugGraphicsOptions(0);
-        contactBox.setActionMap(null);
-        contactBox.setEditable(true);
+        
+        
+        
         this.getContentPane().add(splitPane, BorderLayout.CENTER);
         splitPane.add(controlPanel, JSplitPane.BOTTOM);
         splitPane.add(videoPane, JSplitPane.TOP);
@@ -225,9 +281,9 @@ class PhoneFrame
         participantsScroll.setViewportView(participantsTable);
         statusPanel.add(registrationLabel, BorderLayout.WEST);
         statusPanel.add(registrationAddressLabel, BorderLayout.CENTER);
-        this.getContentPane().add(dialPanel, BorderLayout.NORTH);
-        dialPanel.add(dialButton, BorderLayout.EAST);
-        dialPanel.add(contactBox, BorderLayout.CENTER);
+        
+        setupDialAndForwardPanel(); 
+        
 //        splitPane.setDividerLocation(200);
     }
 

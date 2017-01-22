@@ -490,6 +490,12 @@ public class SipManager
         this.currentlyUsedURI = uri;
     }
     
+    
+    /**
+     * Checks that the address is in the correct form and completes it with default information
+     * @param publicAddress = The address in a simple form
+     * @return
+     */
     public String checkAndCompleteAddress(String publicAddress)
     {
     	console.logEntry();
@@ -1418,6 +1424,45 @@ public class SipManager
     } //call received
 
 
+    //------------ registering
+    void fireEnabledForward(String address)
+    {
+        try {
+            console.logEntry();
+            if (console.isDebugEnabled()) {
+                console.debug("forwarding to address=" + address);
+            }
+            // TODO: Implement
+//            RegistrationEvent evt = new RegistrationEvent(address);
+//            for (int i = listeners.size() - 1; i >= 0; i--) {
+//                ( (CommunicationsListener) listeners.get(i)).registering(evt);
+//            }
+        }
+        finally {
+            console.logExit();
+        }
+    } //call received
+
+    //------------ unregistered
+    public void fireDisabledForward(String address)
+    {
+        try {
+            console.logEntry();
+            if (console.isDebugEnabled()) {
+                console.debug("unregistered, address is " + address);
+            }
+         // TODO: Implement
+//          RegistrationEvent evt = new RegistrationEvent(address);
+//          for (int i = listeners.size() - 1; i >= 0; i--) {
+//              ( (CommunicationsListener) listeners.get(i)).registering(evt);
+//          }
+        }
+        finally {
+            console.logExit();
+        }
+    } //call received
+
+    
     //---------------- received unknown message
     void fireUnknownMessageReceived(Message message)
     {
@@ -1437,6 +1482,8 @@ public class SipManager
             console.logExit();
         }
     } //unknown message
+    
+    
 
     //---------------- rejected a call
     public void fireCallRejectedLocally(String reason, Message invite)
@@ -1698,7 +1745,7 @@ public class SipManager
         try {
             console.logEntry();
             if (console.isDebugEnabled()) {
-                console.debug("received response=" + responseReceivedEvent);
+                console.debug("received response=" + responseReceivedEvent.toString());
             }
             ClientTransaction clientTransaction = responseReceivedEvent.
                 getClientTransaction();
@@ -1728,6 +1775,9 @@ public class SipManager
                 }
                 else if (method.equals(Request.SUBSCRIBE)) {
                     watcher.processSubscribeOK(clientTransaction, response);
+                }
+                else if (method.equals(Request.UPDATE)) {
+                	callForwardProcessing.forwardOK(clientTransaction, response);
                 }
 
             }

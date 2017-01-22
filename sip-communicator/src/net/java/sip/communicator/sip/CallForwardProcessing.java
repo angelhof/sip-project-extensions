@@ -9,6 +9,7 @@ import javax.sip.InvalidArgumentException;
 import javax.sip.TransactionUnavailableException;
 import javax.sip.address.Address;
 import javax.sip.address.SipURI;
+import javax.sip.address.URI;
 import javax.sip.header.CSeqHeader;
 import javax.sip.header.CallIdHeader;
 import javax.sip.header.ContactHeader;
@@ -17,6 +18,7 @@ import javax.sip.header.FromHeader;
 import javax.sip.header.MaxForwardsHeader;
 import javax.sip.header.ToHeader;
 import javax.sip.message.Request;
+import javax.sip.message.Response;
 
 import net.java.sip.communicator.common.Console;
 
@@ -26,7 +28,7 @@ public class CallForwardProcessing {
 	        Console.getConsole(CallForwardProcessing.class);
 	private SipManager sipManCallback = null;
 	private Request forwardRequest = null;
-	private boolean isRegistered = false;
+	private boolean forwardeeURI = false;
 
 	CallForwardProcessing(SipManager sipManCallback)
     {
@@ -37,6 +39,47 @@ public class CallForwardProcessing {
     {
         this.sipManCallback = sipManCallback;
     }
+    
+    void forwardOK(ClientTransaction clientTransaction, Response response)
+    {
+        try {
+            console.logEntry();
+            
+            // Get the request that was accepted
+            Request request = clientTransaction.getRequest();
+            
+            // Save the forwardee URI
+            URI forwardeeURI = request.getRequestURI();
+            
+            // Fire forwarded ok to pass the information to all listeners
+            sipManCallback.fireEnabledForward(forwardeeURI.toString());
+            
+        }
+        finally {
+            console.logExit();
+        }
+    }
+    
+    /**
+     * Create URI from Address 
+     * @param addressToForward
+     * @return
+     * @throws CommunicationsException
+     */
+    URI createUriFromAddress(String addressToForward) throws CommunicationsException
+    {
+    	URI requestURI;
+    	try {
+            requestURI = sipManCallback.addressFactory.createURI(addressToForward);
+        }
+        catch (ParseException ex) {
+            console.error(addressToForward + " is not a legal SIP uri!", ex);
+            throw new CommunicationsException(addressToForward +
+                                              " is not a legal SIP uri!", ex);
+        }
+    	return requestURI;
+    }
+    
 	
 	synchronized void forward(String registrarAddress, int registrarPort,
             String registrarTransport, int expires, String addressToForward) throws
@@ -45,7 +88,8 @@ public class CallForwardProcessing {
 	  try
 	  {
 	      console.logEntry();
-	
+	      console.debug("Address to forward: " + addressToForward);
+	      
 	      //From
 	      FromHeader fromHeader = sipManCallback.getFromHeader();
 	      Address fromAddress = fromHeader.getAddress();
@@ -59,41 +103,7 @@ public class CallForwardProcessing {
 	      
 	      
 	      //Request URI
-	      SipURI requestURI = null;
-	      try {
-	          requestURI = sipManCallback.addressFactory.createSipURI(null,
-	              registrarAddress);
-	      }
-	      catch (ParseException ex) {
-	          console.error("Bad registrar address:" + registrarAddress, ex);
-	          throw new CommunicationsException(
-	              "Bad registrar address:"
-	              + registrarAddress,
-	              ex);
-	      }
-	      catch (NullPointerException ex) {
-	      //Do not throw an exc, we should rather silently notify the user
-	      //	throw new CommunicationsException(
-	      //		"A registrar address was not specified!", ex);
-	          sipManCallback.fireUnregistered(fromAddress.getURI().toString() +
-	                                          " (registrar not specified)");
-	          return;
-	      }
-	      
-	      
-	      
-	      
-	      requestURI.setPort(registrarPort);
-	      try {
-	          requestURI.setTransportParam(registrarTransport);
-	      }
-	      catch (ParseException ex) {
-	          console.error(registrarTransport
-	                        + " is not a valid transport!", ex);
-	          throw new CommunicationsException(
-	              registrarTransport + " is not a valid transport!", ex);
-	      }
-	      
+          URI requestURI = createUriFromAddress(addressToForward);
 	      console.debug("Request URI: " + requestURI);
 	      
 	      
@@ -146,11 +156,13 @@ public class CallForwardProcessing {
 	      
 	      
 	      
-	      //Request
+	      /**
+	       * Make the request and then add an expires and a contact header
+	       */
 	      Request request = null;
 	      try {
 	          request = sipManCallback.messageFactory.createRequest(requestURI,
-	              "FORWARD_TO: " +  addressToForward,
+	              "FORWARD ",
 	              callIdHeader,
 	              cSeqHeader, fromHeader, toHeader,
 	              viaHeaders,
