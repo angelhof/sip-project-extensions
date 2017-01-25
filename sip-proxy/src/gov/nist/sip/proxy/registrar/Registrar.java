@@ -856,13 +856,16 @@ implements RegistrarAccess {
 				ProxyDebug.println("To key tha einai: "+key.toString());
 				
 				String ForwardTo = null;
+				boolean hasCycles = false;
+				String Sender = key.toString();
 				if(request.getMethod().equals("FORWARD")){
 					ForwardTo = request.getRequestURI().toString();
+					hasCycles = foundCycleInRegistrationsGraph(Sender, ForwardTo);
 				}
-				String Sender = key.toString();
+				
 				
 				// Here we should validate if the update in the registration table by checking the graph
-				boolean hasCycles = foundCycleInRegistrationsGraph(Sender, ForwardTo);
+				
 				
 				if(!hasCycles){
 					boolean updateresult = registrationsTable.updateForwardRegistration(Sender, ForwardTo); 
