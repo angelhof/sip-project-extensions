@@ -21,6 +21,15 @@ import java.util.*;
 import java.net.URLEncoder;
 import gov.nist.sip.proxy.presenceserver.*;
 import gov.nist.sip.proxy.gui.*;
+import org.jgraph.JGraph;
+import org.jgraph.graph.DefaultEdge;
+import org.jgrapht.DirectedGraph;
+import org.jgrapht.ListenableGraph;
+import org.jgrapht.alg.CycleDetector;
+import org.jgrapht.ext.JGraphModelAdapter;
+import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.graph.ListenableDirectedGraph;
+
 //ifdef SIMULATION
 /*
 import sim.java.net.*;
@@ -846,24 +855,31 @@ implements RegistrarAccess {
 				
 				String ForwardTo = request.getRequestURI().toString();
 				String Sender = key.toString();
-				boolean updateresult = registrationsTable.updateForwardRegistration(Sender, ForwardTo); 
 				
-				if (updateresult){
-					//if we are here everything went as planned
-					Response response=
-							messageFactory.createResponse(Response.OK,request);
+				// Here we should validate if the update in the registration table by checking the graph
+				boolean hasCycles = foundCycleInRegistrationsGraph(Sender, ForwardTo);
+				
+				if(!hasCycles){
+					boolean updateresult = registrationsTable.updateForwardRegistration(Sender, ForwardTo); 
 					
-
-					if (serverTransaction!=null)
-						serverTransaction.sendResponse(response);
-					else sipProvider.sendResponse(response); 
-
-					if (ProxyDebug.debug)  {
-						ProxyDebug.println
-						("Registrar, processUserForward(), response sent:");
-						ProxyDebug.print(response.toString());
+					if (updateresult){
+						//if we are here everything went as planned
+						Response response=
+								messageFactory.createResponse(Response.OK,request);
+						
+	
+						if (serverTransaction!=null)
+							serverTransaction.sendResponse(response);
+						else sipProvider.sendResponse(response); 
+	
+						if (ProxyDebug.debug)  {
+							ProxyDebug.println
+							("Registrar, processUserForward(), response sent:");
+							ProxyDebug.print(response.toString());
+						}
+						return;
+						
 					}
-					return;
 					
 				}
 		
@@ -900,6 +916,75 @@ implements RegistrarAccess {
 				ProxyDebug.logException(ex);
 			}
 		}
+	}
+	
+	public boolean foundCycleInRegistrationsGraph(String newV1, String newV2){
+		// check if the functionality does not allow autoregression
+		ProxyDebug.println("[Registrations Graph here] Prior To initilization!");
+
+		//intialize the graph object
+		DirectedGraph<String, DefaultEdge> g = new DefaultDirectedGraph<String, DefaultEdge>(DefaultEdge.class);
+
+		ProxyDebug.println("[Registrations Graph here] Initialized Graph!");
+
+		Iterator iterator=registrationsTable.getRegistrations().keySet().iterator();
+		
+		ProxyDebug.println("[Registrations Graph here] Initialized Iterator!");
+
+		while (iterator!=null && iterator.hasNext()) {
+			//ProxyDebug.println("[Registrations Graph Iteration] In!");
+
+			Registration registration=(Registration)registrationsTable.getRegistrations().get(iterator.next());
+			//ProxyDebug.println("[Registrations Graph Iteration] Got Registration! "+registration.toString());
+
+			String vertexToAdd = registration.getKey();
+			//ProxyDebug.println("[Registrations Graph Iteration] Vertex To add! "+vertexToAdd);
+
+			g.addVertex(vertexToAdd);
+			//ProxyDebug.println("[Registrations Graph Iteration] Vertex Added! ");
+
+		}
+		ProxyDebug.println("[Registrations Graph here] Vertexes Done!");
+
+		
+		boolean sameEdgeTwice = false;
+		
+		iterator=registrationsTable.getRegistrations().keySet().iterator();
+		while (iterator!=null && iterator.hasNext()) {
+			Registration registration=(Registration)registrationsTable.getRegistrations().get(iterator.next());
+			String v1 = registration.getKey();
+			String v2 = registration.getForwardToUser();
+			ProxyDebug.println("[Edge Graph iteration] Checking Edge now: "+ v1 + "|" +v2);
+
+			if (v2 != null){
+				if (v1.equals(newV1) && v2.equals(newV2)){
+					ProxyDebug.println("[Edge Graph iteration] edge already found: "+ v1 + "|" +v2);
+					sameEdgeTwice = true;
+				}
+				
+				ProxyDebug.println("[Edge Graph iteration] Inserting Edge now: "+ v1 + "|" +v2);
+				g.addEdge(v1,v2);
+			}
+		}
+		//ProxyDebug.println("[Registrations Graph here] foundCycleInRegistrationsGraph: "+ g);
+		
+		//if the edge does not already exists then add it in the graph and check if there is a circle
+		if (!sameEdgeTwice){
+			ProxyDebug.println("[Edge Graph iteration] The edge has NOT been found, Add it now: "+ newV1 + "|" +newV2);
+			g.addEdge(newV1, newV2);
+		}
+		
+		ProxyDebug.println("[Registrations Graph here] Built in visualization: "+ g);
+	    //JGraph jgraph = new JGraph( new JGraphModelAdapter( g ) );
+		
+		CycleDetector<String, DefaultEdge> cycleDetector = new CycleDetector<String, DefaultEdge>(g);
+		ProxyDebug.println("[Registrations Graph here] Cycle Detector: ");
+
+		boolean result = cycleDetector.detectCycles();
+		ProxyDebug.println("[Registrations Graph here] Cycle Detector result: "+ result);
+
+		
+		return result;
 	}
 	
 	public String findFinalForwardee(String key){

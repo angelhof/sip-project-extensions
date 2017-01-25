@@ -210,18 +210,18 @@ public class SipCommunicator
                     exc);
             }
 
-            try {
-            	sipManager.forward("dfs");
-            }
-            catch (CommunicationsException exc) {
-                console.error(
-                        "An exception occurred while trying to set call forwarding, exc");
-                    console.showException(
-                        "Failed to set call forwarding!\n"
-                        + exc.getMessage() + "\n"
-                        + "This is a warning only. The phone would still function",
-                        exc);
-                }
+//            try {
+//            	sipManager.forward("dfs");
+//            }
+//            catch (CommunicationsException exc) {
+//                console.error(
+//                        "An exception occurred while trying to set call forwarding, exc");
+//                    console.showException(
+//                        "Failed to set call forwarding!\n"
+//                        + exc.getMessage() + "\n"
+//                        + "This is a warning only. The phone would still function",
+//                        exc);
+//                }
             
           
 //            try {

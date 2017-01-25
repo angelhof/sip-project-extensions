@@ -10,5 +10,6 @@
 	<classpathentry kind="lib" path="lib/nist-sdp-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/nist-sip-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/tracesviewer.jar"/>
+	<classpathentry kind="lib" path="lib/jgrapht-ext-1.0.1-uber.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
