@@ -99,34 +99,62 @@ public class CallForwardProcessing {
 	       * TODO: GUI CALL Fix later
 	       */
 	      //sipManCallback.fireRegistering(fromAddress.toString());
-	      URI requestURI = ProcessingUtilities.createUriFromAddress(addressToForward, sipManCallback, console);
 	      CallIdHeader callIdHeader = sipManCallback.sipProvider.getNewCallId();
 	      CSeqHeader cSeqHeader = ProcessingUtilities.safeCSeqHeader(1, Request.UPDATE, sipManCallback, console);
 	      ToHeader toHeader = ProcessingUtilities.headerFromAddress(fromAddress, sipManCallback, console);
 	      ArrayList viaHeaders = sipManCallback.getLocalViaHeaders();
 	      MaxForwardsHeader maxForwardsHeader = sipManCallback.
 	          getMaxForwardsHeader();
+	      Request request = null;
 	      
 	      /**
-	       * Make the request and then add an expires and a contact header
+	       * Check if forward or unforward
 	       */
-	      Request request = null;
-	      try {
-	          request = sipManCallback.messageFactory.createRequest(requestURI,
-	              "FORWARD ",
-	              callIdHeader,
-	              cSeqHeader, fromHeader, toHeader,
-	              viaHeaders,
-	              maxForwardsHeader);
+	      if (addressToForward != null) {
+		      URI requestURI = ProcessingUtilities.createUriFromAddress(addressToForward, sipManCallback, console);
+		      	      
+		      /**
+		       * Make the request and then add an expires and a contact header
+		       */
+		      
+		      try {
+		          request = sipManCallback.messageFactory.createRequest(requestURI,
+		              "FORWARD ",
+		              callIdHeader,
+		              cSeqHeader, fromHeader, toHeader,
+		              viaHeaders,
+		              maxForwardsHeader);
+		      }
+		      catch (ParseException ex) {
+		          console.error("Could not create the register request!", ex);
+		          //throw was missing - reported by Eero Vaarnas
+		          throw new CommunicationsException(
+		              "Could not create the register request!",
+		              ex);
+		      }
 	      }
-	      catch (ParseException ex) {
-	          console.error("Could not create the register request!", ex);
-	          //throw was missing - reported by Eero Vaarnas
-	          throw new CommunicationsException(
-	              "Could not create the register request!",
-	              ex);
+	      else{
+	    	  URI requestURI = fromAddress.getURI();
+		      
+		      /**
+		       * Make the request and then add an expires and a contact header
+		       */
+		      try {
+		          request = sipManCallback.messageFactory.createRequest(requestURI,
+		              "UNFORWARD ",
+		              callIdHeader,
+		              cSeqHeader, fromHeader, toHeader,
+		              viaHeaders,
+		              maxForwardsHeader);
+		      }
+		      catch (ParseException ex) {
+		          console.error("Could not create the register request!", ex);
+		          //throw was missing - reported by Eero Vaarnas
+		          throw new CommunicationsException(
+		              "Could not create the register request!",
+		              ex);
+		      }
 	      }
-	      
 	      
 	      //Expires Header
 	      ExpiresHeader expHeader = null;
@@ -204,125 +232,126 @@ public class CallForwardProcessing {
 	
 	}
 	
-	synchronized void unforward(String registrarAddress, int registrarPort,
-            String registrarTransport, int expires) throws
-	   CommunicationsException
-	{
-	  try
-	  {
-	      console.logEntry();
-	      
-	      //From
-	      FromHeader fromHeader = sipManCallback.getFromHeader();
-	      Address fromAddress = fromHeader.getAddress();
-	      console.debug("From Header: " + fromHeader);
-	      
-	      /**
-	       * TODO: GUI CALL Fix later
-	       */
-	      //sipManCallback.fireRegistering(fromAddress.toString());
-	      URI requestURI = ProcessingUtilities.createUriFromAddress(registrarAddress, sipManCallback, console);
-	      CallIdHeader callIdHeader = sipManCallback.sipProvider.getNewCallId();
-	      CSeqHeader cSeqHeader = ProcessingUtilities.safeCSeqHeader(1, Request.UPDATE, sipManCallback, console);
-	      ToHeader toHeader = ProcessingUtilities.headerFromAddress(fromAddress, sipManCallback, console);
-	      ArrayList viaHeaders = sipManCallback.getLocalViaHeaders();
-	      MaxForwardsHeader maxForwardsHeader = sipManCallback.
-	          getMaxForwardsHeader();
-	      
-	      /**
-	       * Make the request and then add an expires and a contact header
-	       */
-	      Request request = null;
-	      try {
-	          request = sipManCallback.messageFactory.createRequest(requestURI,
-	              "UNFORWARD ",
-	              callIdHeader,
-	              cSeqHeader, fromHeader, toHeader,
-	              viaHeaders,
-	              maxForwardsHeader);
-	      }
-	      catch (ParseException ex) {
-	          console.error("Could not create the register request!", ex);
-	          //throw was missing - reported by Eero Vaarnas
-	          throw new CommunicationsException(
-	              "Could not create the register request!",
-	              ex);
-	      }
-	      
-	      
-	      //Expires Header
-	      ExpiresHeader expHeader = null;
-	      for (int retry = 0; retry < 2; retry++) {
-	          try {
-	              expHeader = sipManCallback.headerFactory.createExpiresHeader(
-	                  expires);
-	          }
-	          catch (InvalidArgumentException ex) {
-	              if (retry == 0) {
-	                  expires = 3600;
-	                  continue;
-	              }
-	              console.error(
-	                  "Invalid registrations expiration parameter - "
-	                  + expires,
-	                  ex);
-	              throw new CommunicationsException(
-	                  "Invalid registrations expiration parameter - "
-	                  + expires,
-	                  ex);
-	          }
-	      }
-	      request.addHeader(expHeader);
-	      //Contact Header should contain IP - bug report - Eero Vaarnas
-	      ContactHeader contactHeader = sipManCallback.
-	          getRegistrationContactHeader();
-	      request.addHeader(contactHeader);
-	      
-	      console.debug(request);
-	      
-	      
-	      
-	      //Transaction
-	      ClientTransaction forwardTrans = null;
-	      try {
-	    	  forwardTrans = sipManCallback.sipProvider.getNewClientTransaction(
-	              request);
-	      }
-	      catch (TransactionUnavailableException ex) {
-	          console.error("Could not create a forward transaction!\n"
-	                        + "Check that the Registrar address is correct!",
-	                        ex);
-	          //throw was missing - reported by Eero Vaarnas
-	          throw new CommunicationsException(
-	              "Could not create a forward transaction!\n"
-	              + "Check that the Registrar address is correct!");
-	      }
-	      try {
-	    	  forwardTrans.sendRequest();
-	          if( console.isDebugEnabled() )
-	              console.debug("sent request= " + request);
-	          //[issue 2] Schedule re registrations
-	          //bug reported by LynlvL@netscape.com
-	          
-	          //scheduleReRegistration( registrarAddress, registrarPort,
-	          //            registrarTransport, expires);
-	
-	      }
-	      //we sometimes get a null pointer exception here so catch them all
-	      catch (Exception ex) {
-	          console.error("Could not send out the forward request!", ex);
-	          //throw was missing - reported by Eero Vaarnas
-	          throw new CommunicationsException(
-	              "Could not send out the forward request!", ex);
-	      }
-	      console.debug(forwardTrans);
-	      this.forwardRequest = request;
-	      
-	  }
-	  finally
-	  {
-	      console.logExit();
-	  }
-	
-	}
+//	synchronized void unforward(String registrarAddress, int registrarPort,
+//            String registrarTransport, int expires) throws
+//	   CommunicationsException
+//	{
+//	  try
+//	  {
+//	      console.logEntry();
+//	      
+//	      //From
+//	      FromHeader fromHeader = sipManCallback.getFromHeader();
+//	      Address fromAddress = fromHeader.getAddress();
+//	      console.debug("From Header: " + fromHeader);
+//	      console.debug("From Address: " + fromAddress.getURI());
+//	      
+//	      /**
+//	       * TODO: GUI CALL Fix later
+//	       */
+//	      //sipManCallback.fireRegistering(fromAddress.toString());
+//	      URI requestURI = fromAddress.getURI();
+//	      CallIdHeader callIdHeader = sipManCallback.sipProvider.getNewCallId();
+//	      CSeqHeader cSeqHeader = ProcessingUtilities.safeCSeqHeader(1, Request.UPDATE, sipManCallback, console);
+//	      ToHeader toHeader = ProcessingUtilities.headerFromAddress(fromAddress, sipManCallback, console);
+//	      ArrayList viaHeaders = sipManCallback.getLocalViaHeaders();
+//	      MaxForwardsHeader maxForwardsHeader = sipManCallback.
+//	          getMaxForwardsHeader();
+//	      
+//	      /**
+//	       * Make the request and then add an expires and a contact header
+//	       */
+//	      Request request = null;
+//	      try {
+//	          request = sipManCallback.messageFactory.createRequest(requestURI,
+//	              "UNFORWARD ",
+//	              callIdHeader,
+//	              cSeqHeader, fromHeader, toHeader,
+//	              viaHeaders,
+//	              maxForwardsHeader);
+//	      }
+//	      catch (ParseException ex) {
+//	          console.error("Could not create the register request!", ex);
+//	          //throw was missing - reported by Eero Vaarnas
+//	          throw new CommunicationsException(
+//	              "Could not create the register request!",
+//	              ex);
+//	      }
+//	      
+//	      
+//	      //Expires Header
+//	      ExpiresHeader expHeader = null;
+//	      for (int retry = 0; retry < 2; retry++) {
+//	          try {
+//	              expHeader = sipManCallback.headerFactory.createExpiresHeader(
+//	                  expires);
+//	          }
+//	          catch (InvalidArgumentException ex) {
+//	              if (retry == 0) {
+//	                  expires = 3600;
+//	                  continue;
+//	              }
+//	              console.error(
+//	                  "Invalid registrations expiration parameter - "
+//	                  + expires,
+//	                  ex);
+//	              throw new CommunicationsException(
+//	                  "Invalid registrations expiration parameter - "
+//	                  + expires,
+//	                  ex);
+//	          }
+//	      }
+//	      request.addHeader(expHeader);
+//	      //Contact Header should contain IP - bug report - Eero Vaarnas
+//	      ContactHeader contactHeader = sipManCallback.
+//	          getRegistrationContactHeader();
+//	      request.addHeader(contactHeader);
+//	      
+//	      console.debug(request);
+//	      
+//	      
+//	      
+//	      //Transaction
+//	      ClientTransaction forwardTrans = null;
+//	      try {
+//	    	  forwardTrans = sipManCallback.sipProvider.getNewClientTransaction(
+//	              request);
+//	      }
+//	      catch (TransactionUnavailableException ex) {
+//	          console.error("Could not create a forward transaction!\n"
+//	                        + "Check that the Registrar address is correct!",
+//	                        ex);
+//	          //throw was missing - reported by Eero Vaarnas
+//	          throw new CommunicationsException(
+//	              "Could not create a forward transaction!\n"
+//	              + "Check that the Registrar address is correct!");
+//	      }
+//	      try {
+//	    	  forwardTrans.sendRequest();
+//	          if( console.isDebugEnabled() )
+//	              console.debug("sent request= " + request);
+//	          //[issue 2] Schedule re registrations
+//	          //bug reported by LynlvL@netscape.com
+//	          
+//	          //scheduleReRegistration( registrarAddress, registrarPort,
+//	          //            registrarTransport, expires);
+//	
+//	      }
+//	      //we sometimes get a null pointer exception here so catch them all
+//	      catch (Exception ex) {
+//	          console.error("Could not send out the forward request!", ex);
+//	          //throw was missing - reported by Eero Vaarnas
+//	          throw new CommunicationsException(
+//	              "Could not send out the forward request!", ex);
+//	      }
+//	      console.debug(forwardTrans);
+//	      this.forwardRequest = request;
+//	      
+//	  }
+//	  finally
+//	  {
+//	      console.logExit();
+//	  }
+//	
+//	}
 }

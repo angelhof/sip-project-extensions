@@ -809,6 +809,8 @@ implements RegistrarAccess {
 	}
 
 
+	
+	
 	/*
 	 * Add the response to the user who wants to perform forwarding 22-1-2017
 	 */
@@ -844,7 +846,10 @@ implements RegistrarAccess {
 				ProxyDebug.println("Pswloxhma to request sou einai: "+request.getRequestURI());
 				ProxyDebug.println("To key tha einai: "+key.toString());
 				
-				String ForwardTo = request.getRequestURI().toString();
+				String ForwardTo = null;
+				if(request.getMethod().equals("FORWARD")){
+					ForwardTo = request.getRequestURI().toString();
+				}
 				String Sender = key.toString();
 				boolean updateresult = registrationsTable.updateForwardRegistration(Sender, ForwardTo); 
 				

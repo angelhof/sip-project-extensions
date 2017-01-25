@@ -476,7 +476,7 @@ public class Proxy implements SipListener  {
 			 */
 	        ProxyDebug.println("perase to 3 To request in proxy klasomouno, request: "+request.toString());
 	        ProxyDebug.println("method for request klanompeis "+request.getMethod().toString());
-			if (request.getMethod().equals("FORWARD")){
+			if (request.getMethod().equals("FORWARD") || request.getMethod().equals("UNFORWARD")){
 		        ProxyDebug.println("UPDATE request in proxy klasomouno, request: "+request.toString());
 		        
 		        //send the response to the user
@@ -486,6 +486,7 @@ public class Proxy implements SipListener  {
 		        
 		        return;
 			}
+			
 
 			// we use a SIP registrar:
 			if ( request.getMethod().equals(Request.REGISTER) ) {

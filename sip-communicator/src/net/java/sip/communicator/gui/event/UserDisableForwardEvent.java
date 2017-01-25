@@ -74,7 +74,7 @@ import java.util.*;
 public class UserDisableForwardEvent
 extends EventObject{
 	
-	public UserDisableForwardEvent(){
-		super(null);
+	public UserDisableForwardEvent(String unforward){
+		super(unforward);
 	}
 }

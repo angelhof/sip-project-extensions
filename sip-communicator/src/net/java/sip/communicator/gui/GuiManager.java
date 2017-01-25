@@ -360,6 +360,7 @@ public class GuiManager
     void forwardButton_actionPerformed(EventObject evt)
     {
         //TODO temporarily close alerts from here.
+    	console.logEntry();
         alertManager.stopAllAlerts();
         String usr_who_forwards = phoneFrame.contactBox.getSelectedItem().toString();
         if (usr_who_forwards == null || usr_who_forwards.trim().length() < 1) {
@@ -369,6 +370,7 @@ public class GuiManager
         for (int i = listeners.size() - 1; i >= 0; i--) {
             ( (UserActionListener) listeners.get(i)).handleForwardRequest(frwEvt);
         }
+        console.logExit();
     }
     
     void blockButton_actionPerformed(EventObject evt)
@@ -403,7 +405,7 @@ public class GuiManager
     {
         //TODO temporarily close alerts from here.
         alertManager.stopAllAlerts();
-        UserDisableForwardEvent stpEvt = new UserDisableForwardEvent();
+        UserDisableForwardEvent stpEvt = new UserDisableForwardEvent("unforward");
         for (int i = listeners.size() - 1; i >= 0; i--) {
             ( (UserActionListener) listeners.get(i)).handleDisableForwardRequest(stpEvt);
         }
@@ -692,6 +694,34 @@ public class GuiManager
             public void actionPerformed(ActionEvent evt)
             {
                 hangupButton_actionPerformed(evt);
+            }
+        });
+        phoneFrame.forwardButton.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent evt)
+            {
+                forwardButton_actionPerformed(evt);
+            }
+        });
+        phoneFrame.disableForwardButton.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent evt)
+            {
+            	disableforwardButton_actionPerformed(evt);
+            }
+        });
+        phoneFrame.blockButton.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent evt)
+            {
+                blockButton_actionPerformed(evt);
+            }
+        });
+        phoneFrame.unblockButton.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent evt)
+            {
+            	unblockButton_actionPerformed(evt);
             }
         });
         phoneFrame.addWindowListener(new WindowAdapter()
