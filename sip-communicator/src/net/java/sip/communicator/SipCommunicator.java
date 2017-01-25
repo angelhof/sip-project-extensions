@@ -210,6 +210,10 @@ public class SipCommunicator
                     exc);
             }
 
+            
+            /**
+             * Dummy call to forward to ensure functionality
+             */
 //            try {
 //            	sipManager.forward("dfs");
 //            }
@@ -398,17 +402,82 @@ public class SipCommunicator
      * TODO: Implement for UserForwardRequest
      * TODO: Also implement handleDisableForwardEvent
      */
-    public void handleForwardRequest()
+    public void handleForwardRequest(UserForwardEvent evt)
     {
-    	
+    	try {
+    		console.logEntry();
+            String forwardee = (String) evt.getSource();
+            
+        	try {
+            	sipManager.forward(forwardee);
+            }
+            catch (CommunicationsException exc) {
+                console.error(
+                        "An exception occurred while trying to set call forwarding, exc");
+                    console.showException(
+                        "Failed to set call forwarding!\n"
+                        + exc.getMessage() + "\n"
+                        + "This is a warning only. The phone would still function",
+                        exc);
+                }
+            
+        }
+        finally {
+            console.logExit();
+        }
     }
     
     /**
      * TODO: Implement for UserBlockRequest
      * TODO: Also implement handleUnblockEvent
      */
-    public void handleBlockRequest()
+    public void handleBlockRequest(UserBlockEvent evt)
     {
+    	try {
+    		console.logEntry();
+            String blockee = (String) evt.getSource();
+            
+        	try {
+            	sipManager.block(blockee);
+            }
+            catch (CommunicationsException exc) {
+                console.error(
+                        "An exception occurred while trying to set blocking, exc");
+                    console.showException(
+                        "Failed to set blocking!\n"
+                        + exc.getMessage() + "\n"
+                        + "This is a warning only. The phone would still function",
+                        exc);
+                }
+        }
+        finally {
+            console.logExit();
+        }
+    	
+    }
+
+    public void handleDisableForwardRequest(UserDisableForwardEvent evt){
+    	try {
+    		console.logEntry();            
+            	sipManager.unforward();
+    	}
+        catch (CommunicationsException exc) {
+            console.error(
+                    "An exception occurred while trying to disable call forwarding, exc");
+                console.showException(
+                    "Failed to disable call forwarding!\n"
+                    + exc.getMessage() + "\n"
+                    + "This is a warning only. The phone would still function",
+                    exc);
+            }
+        finally {
+            console.logExit();
+        }
+    }
+    
+    
+    
+    public void handleUnblockRequest(UserUnblockEvent evt){
     	
     }
     
@@ -445,21 +514,7 @@ public class SipCommunicator
         }
     }
     
-    public void handleDisableForwardRequest(UserDisableForwardEvent evt){
-    	
-    }
     
-    public void handleForwardRequest(UserForwardEvent evt){
-    	
-    }
-    
-    public void handleBlockRequest(UserBlockEvent evt){
-    	
-    }
-    
-    public void handleUnblockRequest(UserUnblockEvent evt){
-    	
-    }
 
     public void handleHangupRequest(UserCallControlEvent evt)
     {
@@ -1032,4 +1087,6 @@ public class SipCommunicator
 
         return SubscriptionAuthorizationResponse.createResponse(response);
     }
+
+
 }

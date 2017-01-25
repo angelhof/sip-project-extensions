@@ -562,7 +562,7 @@ public class SipManager
     		console.debug(addressToBlock);
     	
             callBlockProcessing.block( registrarAddress, registrarPort,
-                                  registrarTransport, registrationsExpiration, addressToBlock);
+                                  registrarTransport, registrationsExpiration, addressToBlock, "block");
     		}
     	finally {
     		console.logExit();
@@ -587,6 +587,19 @@ public class SipManager
     	}
     }
 
+    public void unforward() throws CommunicationsException
+    {
+    	try {
+    		console.logEntry();
+    		
+            callForwardProcessing.forward( registrarAddress, registrarPort,
+                                  registrarTransport, registrationsExpiration, null);
+    		}
+    	finally {
+    		console.logExit();
+    	}
+    }
+    
     /**
      * Causes the RegisterProcessing object to send a registration request
      * to the registrar defined in

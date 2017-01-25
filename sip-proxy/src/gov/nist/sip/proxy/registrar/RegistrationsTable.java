@@ -408,12 +408,8 @@ throws RemoteException
     	String newDesignatedUserToForward = NewUserToForward;
         Registration registration=(Registration)registrations.get(key);
         
-        //valid user to insert into registration
-        if ( newDesignatedUserToForward!=null ){
-        	
-        	// TODO check if this Forward should be done (according to graph)
-        	registration.setForwardToUser(newDesignatedUserToForward);
-        }
+    	// TODO check if this Forward should be done (according to graph)
+    	registration.setForwardToUser(newDesignatedUserToForward);
 
         printRegistrations();
         //see if GUI is mandatory to be updated
