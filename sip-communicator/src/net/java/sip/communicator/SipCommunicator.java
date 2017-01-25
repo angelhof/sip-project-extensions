@@ -136,9 +136,6 @@ public class SipCommunicator
     /**
      * 
      */
-    /**
-     * 
-     */
     public void launch()
     {
         try {
