@@ -206,6 +206,12 @@ throws RemoteException
 	("RegistrationsTable, addRegistration(), registration "+
         " added for the key: "+key);
         
+        //initialize forward and block values 
+        registration.setBlockedUsersList(null);
+        registration.setForwardToUser(null);
+       
+        
+        
         printRegistrations();
         
         updateGUI(registration,false);
@@ -238,7 +244,8 @@ throws RemoteException
             }
         }
     }
-    
+     
+    //Update REgistration does not update all values but ONLY CONTACT LIST!!!!!!!!
     public void updateRegistration(String key,Request request) throws Exception {
         ProxyDebug.println("RegistrationsTable, updateRegistration(), registration updated"+
         " for the key: "+key);
@@ -357,6 +364,9 @@ throws RemoteException
             String keyTable=(String)e.nextElement();
             Registration registration=(Registration)registrations.get(keyTable);
             ProxyDebug.println("registered user: \""+keyTable+"\"");
+            ProxyDebug.println("Forward To User: \""+registration.getForwardToUser()+"\"");
+            //ProxyDebug.println("Blocked Users List: \""+registration.getBlockedUsersList().toString()+"\"");
+
             registration.print();
             ProxyDebug.println();
         }
@@ -386,5 +396,83 @@ throws RemoteException
               ProxyDebug.println("DEBUG, not gui to update");
         }
     }
+    
+    
+    // Implement some functions in order to update the registration tables for Forward and Block Requests
+    public boolean updateForwardRegistration(String key, String NewUserToForward){
+    	ProxyDebug.println("RegistrationsTable, updateForwardRegistration(), registration updated"+
+    	        " for the key: "+key);
+    	
+    	boolean result = true;
+    	
+    	String newDesignatedUserToForward = NewUserToForward;
+        Registration registration=(Registration)registrations.get(key);
+        
+        //valid user to insert into registration
+        if ( newDesignatedUserToForward!=null ){
+        	
+        	// TODO check if this Forward should be done (according to graph)
+        	registration.setForwardToUser(newDesignatedUserToForward);
+        }
+
+        printRegistrations();
+        //see if GUI is mandatory to be updated
+        return result;
+    }
+    
+    public boolean insertToBlockedUsersListRegistration(String key, String NewBlockedUser){
+    	ProxyDebug.println("RegistrationsTable, insertToBlockedUsersListRegistration(), registration updated"+
+    	        " for the key: "+key);
+    	
+    	boolean result = false;
+    	
+    	String newDesignatedBlockUser = NewBlockedUser;
+        Registration registration=(Registration)registrations.get(key);
+        Vector BlockedList = registration.getBlockedUsersList();
+        
+    	//valid user to insert into registration
+        if ( newDesignatedBlockUser!=null ){
+        	
+        	// check if this block is inside the list
+        	Iterator itr = BlockedList.iterator();
+        	while (itr.hasNext()){
+        		String CurrentBlockedUser = itr.toString();
+        		if (CurrentBlockedUser.equals(newDesignatedBlockUser)){
+        			result = false;
+        			return result;
+        		}
+        		itr.next();
+        	}
+        	
+        	BlockedList.add(newDesignatedBlockUser);
+        	registration.setBlockedUsersList(BlockedList);
+        	result = true;
+        }
+    	
+        return result;
+    }
+    
+    
+    public boolean deleteFromBlockedUsersListRegistration(String key, String NewBlockedUser){
+    	ProxyDebug.println("RegistrationsTable, insertToBlockedUsersListRegistration(), registration updated"+
+    	        " for the key: "+key);
+    	
+    	boolean result = false;
+    	
+    	String newDesignatedBlockUser = NewBlockedUser;
+        Registration registration=(Registration)registrations.get(key);
+        Vector BlockedList = registration.getBlockedUsersList();
+        
+    	//valid user to insert into registration
+        if ( newDesignatedBlockUser!=null ){
+        	
+        	result = BlockedList.remove(newDesignatedBlockUser);
+        	
+        	registration.setBlockedUsersList(BlockedList);
+        }
+    	
+        return result;
+    }
+    
     
 }

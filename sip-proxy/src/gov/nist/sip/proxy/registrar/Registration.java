@@ -19,6 +19,10 @@ import gov.nist.sip.proxy.*;
  * @version 1.0
  */
 public class Registration {
+	
+	// extra fields for forward and block 
+	protected String ForwardToUser;
+	protected Vector BlockedUsersList;
 
     protected FromHeader fromHeader;
     protected ToHeader toHeader;
@@ -33,7 +37,11 @@ public class Registration {
     public Registration() {
         toExport=true;
         contactsList=new Vector();
-	buddyList = new Vector();
+        buddyList = new Vector();
+        
+        //initialization
+        BlockedUsersList = new Vector();
+        setForwardToUser (null);
     }
     
     protected ExportedBinding exportBinding() {
@@ -54,6 +62,22 @@ public class Registration {
         toExport=false;
 	return retval;
 
+    }
+    
+    public Vector getBlockedUsersList() {
+    	return BlockedUsersList;
+    }
+    
+    public void setBlockedUsersList( Vector UserList) {
+    	this.BlockedUsersList = UserList;
+    }
+    
+    public String getForwardToUser() {
+    	return ForwardToUser;
+    }
+    
+    public void setForwardToUser( String User) {
+    	this.ForwardToUser = User;
     }
     
     public Vector getContactsList() {
