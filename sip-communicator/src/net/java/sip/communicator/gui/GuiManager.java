@@ -60,15 +60,22 @@ package net.java.sip.communicator.gui;
 import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
+
 import net.java.sip.communicator.common.*;
 import net.java.sip.communicator.common.Console;
 import net.java.sip.communicator.gui.event.*;
+
 import java.awt.SystemColor;
+
 import javax.swing.plaf.metal.MetalLookAndFeel;
+
 import net.java.sip.communicator.gui.plaf.SipCommunicatorColorTheme;
+
 import java.awt.event.KeyEvent;
 import java.io.*;
+
 import net.java.sip.communicator.media.JMFRegistry;
 import net.java.sip.communicator.plugin.setup.*;
 import net.java.sip.communicator.gui.imp.*;
@@ -106,6 +113,7 @@ public class GuiManager
     private ContactListFrame contactList  = null;
     private ConfigFrame      configFrame  = null;
     private ArrayList        listeners    = null;
+    public ArrayList         blocked      = null;
     private AlertManager     alertManager = null;
 
 /** @todo remove after testing */
@@ -136,6 +144,7 @@ public class GuiManager
         contactList   = new ContactListFrame();
         configFrame   = new ConfigFrame(phoneFrame);
         listeners     = new ArrayList();
+        blocked       = new ArrayList();
         alertManager  = new AlertManager();
         logoPanel     = new JPanel(new FlowLayout(FlowLayout.CENTER));
         interlocutors = new InterlocutorsTableModel();
@@ -277,6 +286,10 @@ public class GuiManager
     {
 //        phoneFrame.contactBox.setEnabled(enabled);
         phoneFrame.dialButton.setEnabled(enabled);
+        phoneFrame.forwardButton.setEnabled(enabled);
+        phoneFrame.blockButton.setEnabled(enabled);
+        phoneFrame.unblockButton.setEnabled(enabled);
+        phoneFrame.disableForwardButton.setEnabled(enabled);
         phoneFrame.hangupButton.setEnabled(enabled);
         phoneFrame.answerButton.setEnabled(enabled);
     }
@@ -341,6 +354,58 @@ public class GuiManager
         UserCallInitiationEvent commEvt = new UserCallInitiationEvent(callee);
         for (int i = listeners.size() - 1; i >= 0; i--) {
             ( (UserActionListener) listeners.get(i)).handleDialRequest(commEvt);
+        }
+    }
+    
+    void forwardButton_actionPerformed(EventObject evt)
+    {
+        //TODO temporarily close alerts from here.
+        alertManager.stopAllAlerts();
+        String usr_who_forwards = phoneFrame.contactBox.getSelectedItem().toString();
+        if (usr_who_forwards == null || usr_who_forwards.trim().length() < 1) {
+            return;
+        }
+        UserForwardEvent frwEvt = new UserForwardEvent(usr_who_forwards);
+        for (int i = listeners.size() - 1; i >= 0; i--) {
+            ( (UserActionListener) listeners.get(i)).handleForwardRequest(frwEvt);
+        }
+    }
+    
+    void blockButton_actionPerformed(EventObject evt)
+    {
+        //TODO temporarily close alerts from here.
+        alertManager.stopAllAlerts();
+        String block_usr = phoneFrame.contactBox.getSelectedItem().toString();
+        if (block_usr == null || block_usr.trim().length() < 1) {
+            return;
+        }
+        UserBlockEvent blockEvt = new UserBlockEvent(block_usr);
+        for (int i = listeners.size() - 1; i >= 0; i--) {
+            ( (UserActionListener) listeners.get(i)).handleBlockRequest(blockEvt);
+        }
+    }
+    
+    void unblockButton_actionPerformed(EventObject evt)
+    {
+        //TODO temporarily close alerts from here.
+        alertManager.stopAllAlerts();
+        String unblock_usr = phoneFrame.contactBox.getSelectedItem().toString();
+        if (unblock_usr == null || unblock_usr.trim().length() < 1) {
+            return;
+        }
+        UserUnblockEvent unblEvt = new UserUnblockEvent(unblock_usr);
+        for (int i = listeners.size() - 1; i >= 0; i--) {
+            ( (UserActionListener) listeners.get(i)).handleUnblockRequest(unblEvt);
+        }
+    }
+    
+    void disableforwardButton_actionPerformed(EventObject evt)
+    {
+        //TODO temporarily close alerts from here.
+        alertManager.stopAllAlerts();
+        UserDisableForwardEvent stpEvt = new UserDisableForwardEvent();
+        for (int i = listeners.size() - 1; i >= 0; i--) {
+            ( (UserActionListener) listeners.get(i)).handleDisableForwardRequest(stpEvt);
         }
     }
 

@@ -62,6 +62,7 @@ import java.lang.reflect.*;
 import java.net.*;
 import java.util.*;
 import java.awt.*;
+
 import net.java.sip.communicator.common.*;
 import net.java.sip.communicator.common.Console;
 import net.java.sip.communicator.gui.*;
@@ -71,7 +72,9 @@ import net.java.sip.communicator.media.event.*;
 import net.java.sip.communicator.sip.*;
 import net.java.sip.communicator.sip.event.*;
 import net.java.sip.communicator.sip.security.*;
+
 import java.io.IOException;
+
 import net.java.sip.communicator.plugin.setup.*;
 import net.java.sip.communicator.sip.simple.*;
 
@@ -405,6 +408,22 @@ public class SipCommunicator
         finally {
             console.logExit();
         }
+    }
+    
+    public void handleDisableForwardRequest(UserDisableForwardEvent evt){
+    	
+    }
+    
+    public void handleForwardRequest(UserForwardEvent evt){
+    	
+    }
+    
+    public void handleBlockRequest(UserBlockEvent evt){
+    	
+    }
+    
+    public void handleUnblockRequest(UserUnblockEvent evt){
+    	
     }
 
     public void handleHangupRequest(UserCallControlEvent evt)
