@@ -131,8 +131,21 @@ class PhoneFrame
     JButton disableForwardButton = new JButton();
     JComboBox forwardBox = new JComboBox();
     
-    BorderLayout borderLayoutDialForward = new BorderLayout();
-    JPanel dialAndForwardPanel = new JPanel();
+    //BorderLayout borderLayoutDialForward = new BorderLayout();
+    //JPanel dialAndForwardPanel = new JPanel();
+    
+    /**
+     * Block & Unblock GUI
+     */
+    JPanel blockPanel = new JPanel();
+    JButton blockButton = new JButton();
+    JButton unblockButton = new JButton();
+    JComboBox blockBox = new JComboBox();
+    
+    //BorderLayout borderLayoutBlockUnblock = new BorderLayout();
+    //JPanel blockAndUnblockPanel = new JPanel();
+    BorderLayout borderLayoutDialForwardBlock = new BorderLayout();
+    JPanel dialForwardBlockPanel = new JPanel();
     
     public PhoneFrame(GuiManager guiManCallback) //throws HeadlessException
     {
@@ -155,9 +168,11 @@ class PhoneFrame
     }
     
     private void setupDialAndForwardPanel() throws Exception{
-    	borderLayoutDialForward.setHgap(10);
-        dialAndForwardPanel.setLayout(borderLayoutDialForward);
-        dialAndForwardPanel.setBorder(border8);
+    	borderLayoutDialForwardBlock.setHgap(10);
+    	dialForwardBlockPanel.setLayout(borderLayoutDialForwardBlock);
+    	dialForwardBlockPanel.setLayout(borderLayoutDialForwardBlock);
+    	dialForwardBlockPanel.setBorder(border8);
+    	dialForwardBlockPanel.setBorder(border8);
         
         borderLayout4.setHgap(10);
         dialPanel.setLayout(borderLayout4);
@@ -181,19 +196,32 @@ class PhoneFrame
         disableForwardButton.setEnabled(false);
         disableForwardButton.setMnemonic('D');
         disableForwardButton.setText("Dis. Forw.");
+        
+        blockButton.setEnabled(false);
+        blockButton.setMnemonic('F');
+        blockButton.setText("Block");
+        unblockButton.setEnabled(false);
+        unblockButton.setMnemonic('D');
+        unblockButton.setText("Unblock");
 
         
-        this.getContentPane().add(dialAndForwardPanel, BorderLayout.NORTH);
-        dialAndForwardPanel.add(dialPanel, BorderLayout.NORTH);
+        this.getContentPane().add(dialForwardBlockPanel, BorderLayout.NORTH);
+        dialForwardBlockPanel.add(dialPanel, BorderLayout.NORTH);
+        
+//        this.getContentPane().add(dialForwardBlockPanel, BorderLayout.NORTH);
+//        dialForwardBlockPanel.add(forwardPanel, BorderLayout.SOUTH);
+        
+        dialForwardBlockPanel.add(forwardPanel, BorderLayout.CENTER);
+        dialForwardBlockPanel.add(blockPanel, BorderLayout.SOUTH);
         
         dialPanel.add(dialButton, BorderLayout.EAST);
-        dialPanel.add(contactBox, BorderLayout.CENTER);
-        
-        
-        dialAndForwardPanel.add(forwardPanel, BorderLayout.SOUTH);
+        dialPanel.add(contactBox, BorderLayout.CENTER); 
         
         forwardPanel.add(forwardButton, BorderLayout.EAST);
         forwardPanel.add(disableForwardButton, BorderLayout.WEST);
+        
+        blockPanel.add(blockButton, BorderLayout.EAST);
+        blockPanel.add(unblockButton, BorderLayout.WEST);
         
     }
 
