@@ -196,6 +196,12 @@ public class SipManager
      * asking to call forward to someone or asking to not forward calls anymore.
      */
     CallForwardProcessing callForwardProcessing = null;
+    
+    /**
+     * The instance that handles all call blocking associated activity such as
+     * requesting to block or unblock a user.
+     */
+    CallBlockProcessing callBlockProcessing = null;
 
     /**
      * The instance that handles subscriptions.
@@ -243,6 +249,7 @@ public class SipManager
         registerProcessing    = new RegisterProcessing(this);
         callProcessing        = new CallProcessing(this);
         callForwardProcessing = new CallForwardProcessing(this);
+        callBlockProcessing = new CallBlockProcessing(this);
         watcher               = new Watcher(this);
         presenceAgent         = new PresenceAgent(this);
         presenceStatusManager = new PresenceStatusManager(this);
@@ -545,24 +552,35 @@ public class SipManager
         return publicAddress;
     }
     
+    public void block(String addressToBlock) throws CommunicationsException
+    {
+    	try {
+    		console.logEntry();
+    		console.debug(addressToBlock);
+    		
+    		addressToBlock = checkAndCompleteAddress(addressToBlock);
+    		console.debug(addressToBlock);
+    	
+            callBlockProcessing.block( registrarAddress, registrarPort,
+                                  registrarTransport, registrationsExpiration, addressToBlock);
+    		}
+    	finally {
+    		console.logExit();
+    	}
+    }
+    
     
     public void forward(String addressToForward) throws CommunicationsException
     {
     	try {
     		console.logEntry();
-    		
-    		/** 
-    		 * I would suggest this checks to be in a generic checkAndCompleteAddress function 
-    		 */
     		console.debug(addressToForward);
     		
     		addressToForward = checkAndCompleteAddress(addressToForward);
-    		
     		console.debug(addressToForward);
     	
             callForwardProcessing.forward( registrarAddress, registrarPort,
                                   registrarTransport, registrationsExpiration, addressToForward);
-
     		}
     	finally {
     		console.logExit();

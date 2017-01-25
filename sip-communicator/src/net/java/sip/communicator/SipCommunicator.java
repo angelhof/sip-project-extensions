@@ -136,6 +136,12 @@ public class SipCommunicator
         }
     }
 
+    /**
+     * 
+     */
+    /**
+     * 
+     */
     public void launch()
     {
         try {
@@ -219,6 +225,20 @@ public class SipCommunicator
                         + "This is a warning only. The phone would still function",
                         exc);
                 }
+            
+          
+//            try {
+//            	sipManager.block("bfs");
+//            }
+//            catch (CommunicationsException exc) {
+//                console.error(
+//                        "An exception occurred while trying to set call forwarding, exc");
+//                    console.showException(
+//                        "Failed to set call forwarding!\n"
+//                        + exc.getMessage() + "\n"
+//                        + "This is a warning only. The phone would still function",
+//                        exc);
+//                }
             
             boolean startSimple = false;
             try {
@@ -377,6 +397,24 @@ public class SipCommunicator
         }
     }
 
+    /**
+     * TODO: Implement for UserForwardRequest
+     * TODO: Also implement handleDisableForwardEvent
+     */
+    public void handleForwardRequest()
+    {
+    	
+    }
+    
+    /**
+     * TODO: Implement for UserBlockRequest
+     * TODO: Also implement handleUnblockEvent
+     */
+    public void handleBlockRequest()
+    {
+    	
+    }
+    
     public void handleDialRequest(UserCallInitiationEvent evt)
     {
         try {
