@@ -190,6 +190,18 @@ public class SipManager
      * establishing, managing, and terminating calls.
      */
     CallProcessing callProcessing = null;
+    
+    /**
+     * The instance that handles all call forwarding associated activity such as
+     * asking to call forward to someone or asking to not forward calls anymore.
+     */
+    CallForwardProcessing callForwardProcessing = null;
+    
+    /**
+     * The instance that handles all call blocking associated activity such as
+     * requesting to block or unblock a user.
+     */
+    CallBlockProcessing callBlockProcessing = null;
 
     /**
      * The instance that handles subscriptions.
@@ -236,6 +248,8 @@ public class SipManager
     {
         registerProcessing    = new RegisterProcessing(this);
         callProcessing        = new CallProcessing(this);
+        callForwardProcessing = new CallForwardProcessing(this);
+        callBlockProcessing = new CallBlockProcessing(this);
         watcher               = new Watcher(this);
         presenceAgent         = new PresenceAgent(this);
         presenceStatusManager = new PresenceStatusManager(this);
@@ -482,6 +496,96 @@ public class SipManager
     {
         this.currentlyUsedURI = uri;
     }
+    
+    
+    /**
+     * Checks that the address is in the correct form and completes it with default information
+     * @param publicAddress = The address in a simple form
+     * @return
+     */
+    public String checkAndCompleteAddress(String publicAddress)
+    {
+    	console.logEntry();
+    	
+    	if(publicAddress == null || publicAddress.trim().length() == 0)
+            return ""; //maybe throw an exception?
+
+
+        //Handle default domain name (i.e. transform 1234 -> 1234@sip.com
+        String defaultDomainName =
+            Utils.getProperty("net.java.sip.communicator.sip.DEFAULT_DOMAIN_NAME");
+
+        //feature request, Michael Robertson (sipphone.com)
+        //strip the following chars of their user names: ( - ) <space>
+        if(publicAddress.toLowerCase().indexOf("sipphone.com") != -1
+           || defaultDomainName.indexOf("sipphone.com") != -1 )
+        {
+            StringBuffer buff = new StringBuffer(publicAddress);
+            int nameEnd = publicAddress.indexOf('@');
+            nameEnd = nameEnd==-1?Integer.MAX_VALUE:nameEnd;
+            nameEnd = Math.min(nameEnd, buff.length())-1;
+
+            int nameStart = publicAddress.indexOf("sip:");
+            nameStart = nameStart == -1 ? 0 : nameStart + "sip:".length();
+
+            for(int i = nameEnd; i >= nameStart; i--)
+                if(!Character.isLetter( buff.charAt(i) )
+                   && !Character.isDigit( buff.charAt(i)))
+                    buff.deleteCharAt(i);
+            publicAddress = buff.toString();
+        }
+
+
+        // if user didn't provide a domain name in the URL and someone
+        // has defined the DEFAULT_DOMAIN_NAME property - let's fill in the blank.
+        if (defaultDomainName != null
+            && publicAddress.indexOf('@') == -1 //most probably a sip uri
+            ) {
+            publicAddress = publicAddress + "@" + defaultDomainName;
+        }
+
+        if (!publicAddress.trim().toLowerCase().startsWith("sip:")) {
+            publicAddress = "sip:" + publicAddress;
+        }
+        console.logExit();
+        
+        return publicAddress;
+    }
+    
+    public void block(String addressToBlock) throws CommunicationsException
+    {
+    	try {
+    		console.logEntry();
+    		console.debug(addressToBlock);
+    		
+    		addressToBlock = checkAndCompleteAddress(addressToBlock);
+    		console.debug(addressToBlock);
+    	
+            callBlockProcessing.block( registrarAddress, registrarPort,
+                                  registrarTransport, registrationsExpiration, addressToBlock);
+    		}
+    	finally {
+    		console.logExit();
+    	}
+    }
+    
+    
+    public void forward(String addressToForward) throws CommunicationsException
+    {
+    	try {
+    		console.logEntry();
+    		console.debug(addressToForward);
+    		
+    		addressToForward = checkAndCompleteAddress(addressToForward);
+    		console.debug(addressToForward);
+    	
+            callForwardProcessing.forward( registrarAddress, registrarPort,
+                                  registrarTransport, registrationsExpiration, addressToForward);
+    		}
+    	finally {
+    		console.logExit();
+    	}
+    }
 
     /**
      * Causes the RegisterProcessing object to send a registration request
@@ -508,49 +612,9 @@ public class SipManager
     {
         try {
             console.logEntry();
+            console.debug(publicAddress);
 
-
-
-            if(publicAddress == null || publicAddress.trim().length() == 0)
-                return; //maybe throw an exception?
-
-
-            //Handle default domain name (i.e. transform 1234 -> 1234@sip.com
-            String defaultDomainName =
-                Utils.getProperty("net.java.sip.communicator.sip.DEFAULT_DOMAIN_NAME");
-
-            //feature request, Michael Robertson (sipphone.com)
-            //strip the following chars of their user names: ( - ) <space>
-            if(publicAddress.toLowerCase().indexOf("sipphone.com") != -1
-               || defaultDomainName.indexOf("sipphone.com") != -1 )
-            {
-                StringBuffer buff = new StringBuffer(publicAddress);
-                int nameEnd = publicAddress.indexOf('@');
-                nameEnd = nameEnd==-1?Integer.MAX_VALUE:nameEnd;
-                nameEnd = Math.min(nameEnd, buff.length())-1;
-
-                int nameStart = publicAddress.indexOf("sip:");
-                nameStart = nameStart == -1 ? 0 : nameStart + "sip:".length();
-
-                for(int i = nameEnd; i >= nameStart; i--)
-                    if(!Character.isLetter( buff.charAt(i) )
-                       && !Character.isDigit( buff.charAt(i)))
-                        buff.deleteCharAt(i);
-                publicAddress = buff.toString();
-            }
-
-
-            // if user didn't provide a domain name in the URL and someone
-            // has defined the DEFAULT_DOMAIN_NAME property - let's fill in the blank.
-            if (defaultDomainName != null
-                && publicAddress.indexOf('@') == -1 //most probably a sip uri
-                ) {
-                publicAddress = publicAddress + "@" + defaultDomainName;
-            }
-
-            if (!publicAddress.trim().toLowerCase().startsWith("sip:")) {
-                publicAddress = "sip:" + publicAddress;
-            }
+            publicAddress = checkAndCompleteAddress(publicAddress);
 
             this.currentlyUsedURI = publicAddress;
             registerProcessing.register( registrarAddress, registrarPort,
@@ -1378,6 +1442,45 @@ public class SipManager
     } //call received
 
 
+    //------------ registering
+    void fireEnabledForward(String address)
+    {
+        try {
+            console.logEntry();
+            if (console.isDebugEnabled()) {
+                console.debug("forwarding to address=" + address);
+            }
+            // TODO: Implement
+//            RegistrationEvent evt = new RegistrationEvent(address);
+//            for (int i = listeners.size() - 1; i >= 0; i--) {
+//                ( (CommunicationsListener) listeners.get(i)).registering(evt);
+//            }
+        }
+        finally {
+            console.logExit();
+        }
+    } //call received
+
+    //------------ unregistered
+    public void fireDisabledForward(String address)
+    {
+        try {
+            console.logEntry();
+            if (console.isDebugEnabled()) {
+                console.debug("unregistered, address is " + address);
+            }
+         // TODO: Implement
+//          RegistrationEvent evt = new RegistrationEvent(address);
+//          for (int i = listeners.size() - 1; i >= 0; i--) {
+//              ( (CommunicationsListener) listeners.get(i)).registering(evt);
+//          }
+        }
+        finally {
+            console.logExit();
+        }
+    } //call received
+
+    
     //---------------- received unknown message
     void fireUnknownMessageReceived(Message message)
     {
@@ -1397,6 +1500,8 @@ public class SipManager
             console.logExit();
         }
     } //unknown message
+    
+    
 
     //---------------- rejected a call
     public void fireCallRejectedLocally(String reason, Message invite)
@@ -1658,7 +1763,7 @@ public class SipManager
         try {
             console.logEntry();
             if (console.isDebugEnabled()) {
-                console.debug("received response=" + responseReceivedEvent);
+                console.debug("received response=" + responseReceivedEvent.toString());
             }
             ClientTransaction clientTransaction = responseReceivedEvent.
                 getClientTransaction();
@@ -1688,6 +1793,9 @@ public class SipManager
                 }
                 else if (method.equals(Request.SUBSCRIBE)) {
                     watcher.processSubscribeOK(clientTransaction, response);
+                }
+                else if (method.equals(Request.UPDATE)) {
+                	callForwardProcessing.forwardOK(clientTransaction, response);
                 }
 
             }

@@ -62,6 +62,7 @@ import java.lang.reflect.*;
 import java.net.*;
 import java.util.*;
 import java.awt.*;
+
 import net.java.sip.communicator.common.*;
 import net.java.sip.communicator.common.Console;
 import net.java.sip.communicator.gui.*;
@@ -71,7 +72,9 @@ import net.java.sip.communicator.media.event.*;
 import net.java.sip.communicator.sip.*;
 import net.java.sip.communicator.sip.event.*;
 import net.java.sip.communicator.sip.security.*;
+
 import java.io.IOException;
+
 import net.java.sip.communicator.plugin.setup.*;
 import net.java.sip.communicator.sip.simple.*;
 
@@ -133,6 +136,9 @@ public class SipCommunicator
         }
     }
 
+    /**
+     * 
+     */
     public void launch()
     {
         try {
@@ -204,6 +210,33 @@ public class SipCommunicator
                     exc);
             }
 
+            try {
+            	sipManager.forward("dfs");
+            }
+            catch (CommunicationsException exc) {
+                console.error(
+                        "An exception occurred while trying to set call forwarding, exc");
+                    console.showException(
+                        "Failed to set call forwarding!\n"
+                        + exc.getMessage() + "\n"
+                        + "This is a warning only. The phone would still function",
+                        exc);
+                }
+            
+          
+//            try {
+//            	sipManager.block("bfs");
+//            }
+//            catch (CommunicationsException exc) {
+//                console.error(
+//                        "An exception occurred while trying to set call forwarding, exc");
+//                    console.showException(
+//                        "Failed to set call forwarding!\n"
+//                        + exc.getMessage() + "\n"
+//                        + "This is a warning only. The phone would still function",
+//                        exc);
+//                }
+            
             boolean startSimple = false;
             try {
                 startSimple = Boolean.valueOf(Utils.getProperty(
@@ -361,6 +394,24 @@ public class SipCommunicator
         }
     }
 
+    /**
+     * TODO: Implement for UserForwardRequest
+     * TODO: Also implement handleDisableForwardEvent
+     */
+    public void handleForwardRequest()
+    {
+    	
+    }
+    
+    /**
+     * TODO: Implement for UserBlockRequest
+     * TODO: Also implement handleUnblockEvent
+     */
+    public void handleBlockRequest()
+    {
+    	
+    }
+    
     public void handleDialRequest(UserCallInitiationEvent evt)
     {
         try {
@@ -392,6 +443,22 @@ public class SipCommunicator
         finally {
             console.logExit();
         }
+    }
+    
+    public void handleDisableForwardRequest(UserDisableForwardEvent evt){
+    	
+    }
+    
+    public void handleForwardRequest(UserForwardEvent evt){
+    	
+    }
+    
+    public void handleBlockRequest(UserBlockEvent evt){
+    	
+    }
+    
+    public void handleUnblockRequest(UserUnblockEvent evt){
+    	
     }
 
     public void handleHangupRequest(UserCallControlEvent evt)

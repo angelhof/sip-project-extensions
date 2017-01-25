@@ -72,6 +72,14 @@ public interface UserActionListener
     extends java.util.EventListener
 {
     public void handleDialRequest(UserCallInitiationEvent evt);
+    
+    public void handleDisableForwardRequest(UserDisableForwardEvent evt);
+    
+    public void handleForwardRequest(UserForwardEvent evt);
+    
+    public void handleBlockRequest(UserBlockEvent evt);
+    
+    public void handleUnblockRequest(UserUnblockEvent evt);
 
     public void handleHangupRequest(UserCallControlEvent evt);
 
