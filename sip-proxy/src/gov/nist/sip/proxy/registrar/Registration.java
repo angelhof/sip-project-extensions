@@ -23,6 +23,9 @@ public class Registration {
 	// extra fields for forward and block 
 	protected String ForwardToUser;
 	protected Vector BlockedUsersList;
+	
+	//extra field for category of user
+	protected String userCategory;
 
     protected FromHeader fromHeader;
     protected ToHeader toHeader;
@@ -42,6 +45,7 @@ public class Registration {
         //initialization
         BlockedUsersList = new Vector();
         setForwardToUser (null);
+        setuserCategory ("Normal");
     }
     
     protected ExportedBinding exportBinding() {
@@ -78,6 +82,14 @@ public class Registration {
     
     public void setForwardToUser( String User) {
     	this.ForwardToUser = User;
+    }
+    
+    public String getuserCategory () {
+    	return userCategory;
+    }
+    
+    public void setuserCategory( String categ) {
+    	this.userCategory = categ;
     }
     
     public Vector getContactsList() {
@@ -133,6 +145,55 @@ public class Registration {
             }
         }
       
+    }
+    
+    public boolean insertToBlockedUsersListRegistration(String NewBlockedUser){
+    	boolean result = false;
+    	
+    	String newDesignatedBlockUser = NewBlockedUser;
+        Vector BlockedList = this.getBlockedUsersList();
+        
+    	//valid user to insert into registration
+        if ( newDesignatedBlockUser!=null ){
+        	
+        	if (BlockedList != null){
+        		// check if this block is inside the list
+            	Iterator itr = BlockedList.iterator();
+            	while (itr.hasNext()){
+            		String CurrentBlockedUser = itr.toString();
+            		if (CurrentBlockedUser.equals(newDesignatedBlockUser)){
+            			result = false;
+            			return result;
+            		}
+            		itr.next();
+            	}
+        	}
+        	
+        	
+        	BlockedList.add(newDesignatedBlockUser);
+        	this.setBlockedUsersList(BlockedList);
+        	result = true;
+        }
+    	
+        return result;
+    }
+    
+    public boolean deleteFromBlockedUsersListRegistration( String NewBlockedUser){
+    	
+    	boolean result = false;
+    	
+    	String newDesignatedBlockUser = NewBlockedUser;
+        Vector BlockedList = this.getBlockedUsersList();
+        
+    	//valid user to insert into registration
+        if ( newDesignatedBlockUser!=null && BlockedList != null){
+        	
+        	result = BlockedList.remove(newDesignatedBlockUser);
+        	
+        	this.setBlockedUsersList(BlockedList);
+        }
+            	
+        return result;
     }
     
     public void updateContactHeader(ContactHeader contactParameter) {
@@ -208,7 +269,11 @@ public class Registration {
             retval.append("display_name=\""+displayName+"\"");
         }
      
-        retval.append(" uri=\""+key+"\" ");
+        if (this.getuserCategory()!=null) {
+            retval.append(" category=\""+this.getuserCategory()+"\" ");
+        }
+        
+        retval.append(" uri=\""+key+"\"> ");
      
         for( int i=0; i<contactsList.size();i++) {
             retval.append("     <CONTACT ");
@@ -233,10 +298,24 @@ public class Registration {
 	
 	// Append the buddy list to the contact.
         for( int i=0; i<buddyList.size();i++) {
-	     retval.append(" <BUDDY  uri= \"").append(buddyList.elementAt(i).toString()).append("/>\n");
+	     retval.append(" <BUDDY  uri= \"").append(buddyList.elementAt(i).toString()).append("/> ");
 	}
+        
+      // Append the new fields as well 27-1-2017 update
+        if (this.getForwardToUser()!=null) {
+            retval.append("<FORWARD_TO uri=\""+this.getForwardToUser()+"\"/> ");
+        }
+        
+        
+        if (this.BlockedUsersList != null){
+	        Iterator itr = this.BlockedUsersList.iterator();
+	    	while (itr.hasNext()){
+	    		String CurrentBlockedUser = itr.next().toString();
+	    		retval.append("<BLOCKED_USER uri=\""+CurrentBlockedUser+"\"/> ");
+	    	}          
+        }
 
-        retval.append("</REGISTRATION>\n");
+        retval.append("\n</REGISTRATION>\n");
 	return retval.toString();
     }
     

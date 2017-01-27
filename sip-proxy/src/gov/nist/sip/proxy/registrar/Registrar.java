@@ -323,6 +323,9 @@ implements RegistrarAccess {
 					ProxyDebug.println
 					("Registrar, processRegister(), response sent:"+response.toString());
 				}
+				// if registrations table has changed we should update the registrations.xml file
+				this.writeXMLRegistrations();
+				
 				return;
 			}
 
@@ -851,8 +854,8 @@ implements RegistrarAccess {
 
 
 			if ( registrationsTable.hasRegistration(key) ) {
-				ProxyDebug.println("Pswloxhma to request sou einai: "+request.getContent());
-				ProxyDebug.println("Pswloxhma to request sou einai: "+request.getRequestURI());
+				ProxyDebug.println("Content request sou einai: "+request.getContent());
+				ProxyDebug.println(" to RequestURI sou einai: "+request.getRequestURI());
 				ProxyDebug.println("To key tha einai: "+key.toString());
 				
 				String ForwardTo = null;
@@ -885,6 +888,10 @@ implements RegistrarAccess {
 							("Registrar, processUserForward(), response sent:");
 							ProxyDebug.print(response.toString());
 						}
+						
+						// if registrations table has changed we should update the registrations.xml file
+						this.writeXMLRegistrations();
+						
 						return;
 						
 					}
@@ -920,6 +927,120 @@ implements RegistrarAccess {
 			if (ProxyDebug.debug) {
 				ProxyDebug.println
 				("Registrar, processUserForward(), internal error, "+
+						"exception raised:");
+				ProxyDebug.logException(ex);
+			}
+		}
+	}
+	
+	
+	/*
+	 * Add the response to the user who wants to perform Block 25-1-2017
+	 */
+	public synchronized void processUserBlocking(Request request, SipProvider sipProvider,
+			ServerTransaction serverTransaction ) {
+		try{
+			MessageFactory messageFactory=proxy.getMessageFactory();
+
+			String key=getKey(request);
+
+			// Add the key if it is a new user:
+			if (ProxyDebug.debug){
+				ProxyDebug.println
+				("Registrar, processUserBlocking(), key: \""+key+"\"");
+			}
+			if (key==null){
+				if (ProxyDebug.debug) {
+					ProxyDebug.println
+					("Registrar, processUserBlocking(), key is null"+
+							" 400 INVALID REQUEST replied");
+				}
+				Response response=messageFactory.createResponse
+						(Response.BAD_REQUEST,request);
+				if (serverTransaction!=null)
+					serverTransaction.sendResponse(response);
+				else sipProvider.sendResponse(response);
+				return ;
+			}
+
+
+			if ( registrationsTable.hasRegistration(key) ) {
+				ProxyDebug.println("Content of request is: "+request.getContent());
+				ProxyDebug.println("URI of request is: "+request.getRequestURI());
+				ProxyDebug.println("Key is: "+key.toString());
+				
+				boolean updateresult = false;
+				
+				String BlockID = null;
+				String Sender = key.toString();
+				if(request.getMethod().equals("BLOCK")){
+					BlockID = request.getRequestURI().toString();
+					updateresult = registrationsTable.insertToBlockedUsersListRegistration
+							(Sender, BlockID);
+				}
+				
+				if(request.getMethod().equals("UNBLOCK")){
+					BlockID = request.getRequestURI().toString();
+					updateresult = registrationsTable.deleteFromBlockedUsersListRegistration
+							(Sender, BlockID);
+				}
+				
+				
+				
+				
+				
+				if (updateresult){
+					//if we are here everything went as planned
+					Response response=
+							messageFactory.createResponse(Response.OK,request);
+					
+
+					if (serverTransaction!=null)
+						serverTransaction.sendResponse(response);
+					else sipProvider.sendResponse(response); 
+
+					if (ProxyDebug.debug)  {
+						ProxyDebug.println
+						("Registrar, processUserBlocking(), response sent:");
+						ProxyDebug.print(response.toString());
+					}
+					// if registrations table has changed we should update the registrations.xml file
+					this.writeXMLRegistrations();
+					
+					return;
+					
+				}
+					
+		
+			}
+			
+			
+			if (ProxyDebug.debug) {
+				ProxyDebug.println
+				("No valid User To Block");
+			}
+			Response response=messageFactory.createResponse
+					(Response.BAD_REQUEST,request);
+			if (serverTransaction!=null)
+				serverTransaction.sendResponse(response);
+			else sipProvider.sendResponse(response);
+			if (ProxyDebug.debug) {
+				ProxyDebug.println
+				("Registrar, processUserBlocking(), response sent:");
+				ProxyDebug.print(response.toString());
+			}
+			return ;
+
+		
+		} catch (SipException ex) {
+			if (ProxyDebug.debug) {
+				ProxyDebug.println("Registrar.processUserBlocking exception raised:");
+				ProxyDebug.logException(ex);
+			}
+		} catch(Exception ex) {
+			if (ProxyDebug.debug) {
+				ProxyDebug.println
+				("Registrar, processUserBlocking(), internal error, "+
 						"exception raised:");
 				ProxyDebug.logException(ex);
 			}
@@ -1002,7 +1123,6 @@ implements RegistrarAccess {
 		String currentForwardee = currentRegistration.getForwardToUser();
 		
 		
-		//This loop is infinite!!!!!!!
 		while (currentForwardee!=null){
 			ProxyDebug.println("mouniasa 0: "+currentForwardee);
 
@@ -1022,6 +1142,12 @@ implements RegistrarAccess {
 		
 		return currentRegistration.getKey();
 	}
+	
+	public boolean foundInBlockedUsersList(String caller, String callee){
+		boolean result = registrationsTable.inBlockedUsersListRegistration(caller,callee);
+		return result;
+	}
+
 	
 	
 	//Function for debug purposes for a simple proxy response sender

@@ -167,7 +167,7 @@ public class Proxy implements SipListener  {
 	 */ 
 	public void processRequest(RequestEvent requestEvent) {
 		
-		ProxyDebug.println("Pare to stack gamiolh: "+Thread.currentThread().getStackTrace().toString());
+		ProxyDebug.println("Pare to stack: "+Thread.currentThread().getStackTrace().toString());
 		
 		for (StackTraceElement ste : Thread.currentThread().getStackTrace()) {
 			ProxyDebug.println(ste.toString());
@@ -175,7 +175,7 @@ public class Proxy implements SipListener  {
 		
 		Request request = requestEvent.getRequest();
 		
-        ProxyDebug.println("perase sto 0 To request in proxy klasomouno, request: "+request.toString());
+        ProxyDebug.println("perase sto 0 To request in proxy, request: "+request.toString());
 
 
 		SipProvider sipProvider = (SipProvider) requestEvent.getSource();
@@ -222,7 +222,7 @@ public class Proxy implements SipListener  {
             validity
 			 */
 
-	        ProxyDebug.println("perase sto 1 To request in proxy klasomouno, request: "+request.toString());
+	        ProxyDebug.println("perase sto 1 To request in proxy, request: "+request.toString());
 
 			
 			RequestValidation requestValidation=new RequestValidation(this);
@@ -285,7 +285,7 @@ public class Proxy implements SipListener  {
 			/***************************************************************************/
 			/****** 2. Preprocess routing information (Section 16.4) *******************/
 			/***************************************************************************/
-	        ProxyDebug.println("perase sto 2 To request in proxy klasomouno, request: "+request.toString());
+	        ProxyDebug.println("perase sto 2 To request in proxy, request: "+request.toString());
 
 			/*   The proxy MUST inspect the Request-URI of the request.  If the
             Request-URI of the request contains a value this proxy previously
@@ -472,17 +472,33 @@ public class Proxy implements SipListener  {
 			}
 			
 			/*
-			 * We insert the listener for the UPDATE requests here 22-1-2017
+			 * We insert the listener for the FORWARD and UNFORWARD requests here 22-1-2017
 			 */
-	        ProxyDebug.println("perase to 3 To request in proxy klasomouno, request: "+request.toString());
-	        ProxyDebug.println("method for request klanompeis "+request.getMethod().toString());
+	        ProxyDebug.println("perase to 3  request: "+request.toString());
+	        //ProxyDebug.println("method for request FORWARD and UNFORWARD "+request.getMethod().toString());
 			if (request.getMethod().equals("FORWARD") || request.getMethod().equals("UNFORWARD")){
-		        ProxyDebug.println("UPDATE request in proxy klasomouno, request: "+request.toString());
+		        ProxyDebug.println("UPDATE request in proxy, request: "+request.toString());
 		        
 		        //send the response to the user
 		        
 		        registrar.processUserForward(request,sipProvider,serverTransaction);    
         
+		        
+		        return;
+			}
+			
+			
+			/*
+			 * We insert the listener for the BLOCK and UNBLOCK requests here 25-1-2017
+			 */
+	        //ProxyDebug.println("method for request BLOCK or UNBLOCK "+request.getMethod().toString());
+			if (request.getMethod().equals("BLOCK") || request.getMethod().equals("UNBLOCK") ) 
+			{
+		        ProxyDebug.println("BLOCK request in proxy, request: "+request.toString());
+		        
+		        //send the response to the user
+		        
+		        registrar.processUserBlocking(request,sipProvider,serverTransaction);    
 		        
 		        return;
 			}
@@ -672,10 +688,36 @@ public class Proxy implements SipListener  {
 			ProxyDebug.println("krakovia request: "+request.toString());
 			ProxyDebug.println("krakovia serverTransaction: "+request.getRequestURI());
 
+			
+			//Check the Blocked User List for the specific request
+			//if the user is blocked then it should return busy
+			String caller = request.getHeader(FromHeader.NAME).toString();
+			String callee = request.getHeader(ToHeader.NAME).toString();
+			caller = caller.substring(caller.indexOf("<") + 1, caller.indexOf(">"));
+			callee = callee.substring(callee.indexOf("<") + 1, callee.indexOf(">"));
+			caller = caller.split(";")[0];
+			
+			ProxyDebug.println("Caller and Callee: "+caller +"~"+callee);
+			boolean userIsBlocked = registrar.foundInBlockedUsersList(callee, caller);
+			if (userIsBlocked){
+				ProxyDebug.println
+				("Proxy: User: "+callee+" is Already Blocked from: "+caller);
+				Response response=
+						messageFactory.createResponse
+						(Response.NOT_FOUND,request);
+				if (serverTransaction!=null)
+					serverTransaction.sendResponse(response);
+				else 
+					sipProvider.sendResponse(response);
+				return;
+			}
+
+			
 			/**
 			 * Changes request based on final forwardee
 			 */
 			Request newrequest = transformRequestBasedOnForwardings(request);
+			
 			if (newrequest == null){
 				ProxyDebug.println
 				("Proxy: User To forward not found online");
@@ -815,7 +857,8 @@ public class Proxy implements SipListener  {
 			}
 		}
 	}
-
+	
+	
 	private Request transformRequestBasedOnForwardings(Request request) throws ParseException {
 		
 		ProxyDebug.println("Proxy [entry]: transformRequestBasedOnForwardings");
@@ -882,7 +925,7 @@ public class Proxy implements SipListener  {
 	public void processResponse(ResponseEvent responseEvent) {
 		try{
 			
-			ProxyDebug.println("Pare to stack gamiolh: "+Thread.currentThread().getStackTrace().toString());
+			//ProxyDebug.println("Pare to stack: "+Thread.currentThread().getStackTrace().toString());
 			
 			for (StackTraceElement ste : Thread.currentThread().getStackTrace()) {
 				ProxyDebug.println(ste.toString());
@@ -891,7 +934,6 @@ public class Proxy implements SipListener  {
 			Response response = responseEvent.getResponse();
 
 			
-	        ProxyDebug.println("perase sto 0 To response in proxy klasomouno, request: "+response.toString());
 
 
 

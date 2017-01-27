@@ -365,9 +365,20 @@ throws RemoteException
             Registration registration=(Registration)registrations.get(keyTable);
             ProxyDebug.println("registered user: \""+keyTable+"\"");
             ProxyDebug.println("Forward To User: \""+registration.getForwardToUser()+"\"");
+            
+            
             //ProxyDebug.println("Blocked Users List: \""+registration.getBlockedUsersList().toString()+"\"");
-
-            registration.print();
+            Vector BlockedList = registration.getBlockedUsersList();
+            ProxyDebug.println("Blocked Users List: ");
+        	// check if this block is inside the list
+            if (BlockedList != null){
+            	Iterator itr = BlockedList.iterator();
+            	while (itr.hasNext()){
+            		String CurrentBlockedUser = itr.next().toString();
+                    ProxyDebug.println("	Blocked User: "+CurrentBlockedUser);
+            	}           
+            }
+        	
             ProxyDebug.println();
         }
         ProxyDebug.println("************************************************");
@@ -417,57 +428,42 @@ throws RemoteException
     }
     
     public boolean insertToBlockedUsersListRegistration(String key, String NewBlockedUser){
-    	ProxyDebug.println("RegistrationsTable, insertToBlockedUsersListRegistration(), registration updated"+
-    	        " for the key: "+key);
-    	
-    	boolean result = false;
     	
     	String newDesignatedBlockUser = NewBlockedUser;
-        Registration registration=(Registration)registrations.get(key);
-        Vector BlockedList = registration.getBlockedUsersList();
-        
-    	//valid user to insert into registration
-        if ( newDesignatedBlockUser!=null ){
-        	
-        	// check if this block is inside the list
-        	Iterator itr = BlockedList.iterator();
-        	while (itr.hasNext()){
-        		String CurrentBlockedUser = itr.toString();
-        		if (CurrentBlockedUser.equals(newDesignatedBlockUser)){
-        			result = false;
-        			return result;
-        		}
-        		itr.next();
-        	}
-        	
-        	BlockedList.add(newDesignatedBlockUser);
-        	registration.setBlockedUsersList(BlockedList);
-        	result = true;
-        }
-    	
-        return result;
+        Registration registration=(Registration)registrations.get(key);   	
+        return registration.insertToBlockedUsersListRegistration(NewBlockedUser);
     }
     
     
     public boolean deleteFromBlockedUsersListRegistration(String key, String NewBlockedUser){
-    	ProxyDebug.println("RegistrationsTable, insertToBlockedUsersListRegistration(), registration updated"+
-    	        " for the key: "+key);
-    	
-    	boolean result = false;
+    	ProxyDebug.println("RegistrationsTable, deleteFromBlockedUsersListRegistration(), "
+    			+ "registration updated"+" for the key: "+key);
     	
     	String newDesignatedBlockUser = NewBlockedUser;
         Registration registration=(Registration)registrations.get(key);
+        return registration.deleteFromBlockedUsersListRegistration(NewBlockedUser);
+    }
+    
+    public boolean inBlockedUsersListRegistration(String key, String blockedUser){
+    	Registration registration=(Registration)registrations.get(key);
+        ProxyDebug.println("inBlockedUsersListRegistration registered user: "+key+"\"");    
+        
+        //ProxyDebug.println("Blocked Users List: \""+registration.getBlockedUsersList().toString()+"\"");
         Vector BlockedList = registration.getBlockedUsersList();
         
-    	//valid user to insert into registration
-        if ( newDesignatedBlockUser!=null ){
-        	
-        	result = BlockedList.remove(newDesignatedBlockUser);
-        	
-        	registration.setBlockedUsersList(BlockedList);
+    	// check if this blocked is inside the list
+        if (BlockedList != null){
+        	Iterator itr = BlockedList.iterator();
+        	while (itr.hasNext()){
+        		String CurrentBlockedUser = itr.next().toString();
+                ProxyDebug.println("	Blocked User: "+CurrentBlockedUser);
+        		if (CurrentBlockedUser.equals(blockedUser)){
+                    ProxyDebug.println("FOUND HIM!!  "+CurrentBlockedUser);
+        			return true;
+        		}
+        	}           
         }
-    	
-        return result;
+        return false;
     }
     
     
