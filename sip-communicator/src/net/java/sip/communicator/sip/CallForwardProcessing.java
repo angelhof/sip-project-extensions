@@ -60,6 +60,26 @@ public class CallForwardProcessing {
         }
     }
     
+    void unforwardOK(ClientTransaction clientTransaction, Response response)
+    {
+        try {
+            console.logEntry();
+            
+            // Get the request that was accepted
+            Request request = clientTransaction.getRequest();
+            
+            // Save the forwardee URI
+            URI forwardeeURI = request.getRequestURI();
+            
+            // Fire forwarded ok to pass the information to all listeners
+            sipManCallback.fireDisabledForward(forwardeeURI.toString());
+            
+        }
+        finally {
+            console.logExit();
+        }
+    }
+    
     /**
      * Create URI from Address 
      * @param addressToForward
