@@ -1480,7 +1480,45 @@ public class SipManager
         try {
             console.logEntry();
             if (console.isDebugEnabled()) {
-                console.debug("unregistered, address is " + address);
+                console.debug("disabled forwarding");
+            }
+         // TODO: Implement
+//          RegistrationEvent evt = new RegistrationEvent(address);
+//          for (int i = listeners.size() - 1; i >= 0; i--) {
+//              ( (CommunicationsListener) listeners.get(i)).registering(evt);
+//          }
+        }
+        finally {
+            console.logExit();
+        }
+    } //call received
+    
+  //------------ registering
+    void fireUnblocked(String address)
+    {
+        try {
+            console.logEntry();
+            if (console.isDebugEnabled()) {
+            	console.debug("Unblocked: " + address);
+            }
+            // TODO: Implement
+//            RegistrationEvent evt = new RegistrationEvent(address);
+//            for (int i = listeners.size() - 1; i >= 0; i--) {
+//                ( (CommunicationsListener) listeners.get(i)).registering(evt);
+//            }
+        }
+        finally {
+            console.logExit();
+        }
+    } //call received
+
+    //------------ unregistered
+    public void fireBlocked(String address)
+    {
+        try {
+            console.logEntry();
+            if (console.isDebugEnabled()) {
+                console.debug("Blocked: " + address);
             }
          // TODO: Implement
 //          RegistrationEvent evt = new RegistrationEvent(address);
@@ -1808,7 +1846,18 @@ public class SipManager
                     watcher.processSubscribeOK(clientTransaction, response);
                 }
                 else if (method.equals(Request.UPDATE)) {
-                	callForwardProcessing.forwardOK(clientTransaction, response);
+                	String updateOption = clientTransaction.getRequest().getMethod();
+                	console.debug(updateOption);
+                	if(updateOption.equals("FORWARD ")){
+                		callForwardProcessing.forwardOK(clientTransaction, response);
+                	}else if(updateOption.equals("UNFORWARD ")){
+                		callForwardProcessing.unforwardOK(clientTransaction, response);
+                	}else if(updateOption.equals("BLOCK ")){
+                		callBlockProcessing.blockOK(clientTransaction, response);
+                	}else if(updateOption.equals("UNBLOCK ")){
+                		callBlockProcessing.unblockOK(clientTransaction, response);
+                	}
+                	
                 }
 
             }
@@ -1853,7 +1902,7 @@ public class SipManager
                 if (method.equals(Request.INVITE)) {
                     callProcessing.processNotFound(clientTransaction, response);
                 }
-                if (method.equals(Request.SUBSCRIBE)) {
+                else if (method.equals(Request.SUBSCRIBE)) {
                     watcher.processNotFound(clientTransaction, response);
                 }
                 else {

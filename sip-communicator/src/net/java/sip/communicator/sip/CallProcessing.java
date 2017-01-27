@@ -497,6 +497,43 @@ public class CallProcessing
                 sipManCallback.fireUnknownMessageReceived(byeRequest);
                 return;
             }
+            
+            /**
+             * When we say bye we also have to send the call time
+             */
+            String callState = call.getState();
+            Dialog callDialog = call.getDialog();
+            if(callState.equals(Call.CONNECTED)){
+            	long currentTime = System.currentTimeMillis();
+            	long callDuration = currentTime - call.getTimeOfConnection();
+            	console.debug("Duration: " + callDuration);
+            	console.debug(call.getInitialRequest().toString());
+            	/**
+            	 * Here we can have caller for the FromHeader of the initialRequest
+            	 * TODO: Form the request so that the server can handle it and charge us
+            	 */
+            	try{
+            		Request timeOfHangupRequest = callDialog.createRequest("OPTIONS");
+            		console.debug("Time of hangup request: " + timeOfHangupRequest);
+            		try {
+            			ContentTypeHeader contentTypeHeader =
+                            sipManCallback.headerFactory.createContentTypeHeader(
+                            "application", "duration");
+            			String content = "Duration: " + String.valueOf(callDuration) + "\n";
+            			console.debug("COntent: " + content);
+						timeOfHangupRequest.setContent(content, contentTypeHeader);
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+            		console.debug("Time of hangup request: " + timeOfHangupRequest);
+            		sipManCallback.sipProvider.sendRequest(timeOfHangupRequest);
+            		
+            	}
+            	catch(SipException ex) {
+            		console.debug("Couldn't create request");
+            	}
+            }
             //change status
             call.setState(Call.DISCONNECTED);
             //Send OK
@@ -928,6 +965,42 @@ public class CallProcessing
                 || call.getState().equals(Call.RECONNECTED)) {
                 call.setState(Call.DISCONNECTED);
                 sayBye(dialog);
+                /**
+                 * When we say bye we also have to send the call time
+                 */
+                String callState = call.getState();
+                Dialog callDialog = call.getDialog();
+                
+            	long currentTime = System.currentTimeMillis();
+            	long callDuration = currentTime - call.getTimeOfConnection();
+            	console.debug("Duration: " + callDuration);
+            	console.debug(call.getInitialRequest().toString());
+            	/**
+            	 * Here we can have caller for the FromHeader of the initialRequest
+            	 * TODO: Form the request so that the server can handle it and charge us
+            	 */
+            	try{
+            		Request timeOfHangupRequest = callDialog.createRequest("OPTIONS");
+            		console.debug("Time of hangup request: " + timeOfHangupRequest);
+            		try {
+            			ContentTypeHeader contentTypeHeader =
+                            sipManCallback.headerFactory.createContentTypeHeader(
+                            "application", "duration");
+            			String content = "Duration: " + String.valueOf(callDuration) + "\n";
+            			console.debug("COntent: " + content);
+						timeOfHangupRequest.setContent(content, contentTypeHeader);
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+            		console.debug("Time of hangup request: " + timeOfHangupRequest);
+            		sipManCallback.sipProvider.sendRequest(timeOfHangupRequest);
+            		
+            	}
+            	catch(SipException ex) {
+            		console.debug("Couldn't create request");
+            	}
+            
             }
             else if (call.getState().equals(Call.DIALING)
                      || call.getState().equals(Call.RINGING)) {
@@ -1019,6 +1092,8 @@ public class CallProcessing
             catch (SipException ex1) {
                 throw new CommunicationsException("Failed to send the BYE request");
             }
+            
+            
         }
         finally
         {

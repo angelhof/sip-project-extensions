@@ -103,6 +103,13 @@ public class Call
      */
     private Request initialRequest = null;
     private String callState = "";
+    
+    /**
+     * Time of connection so that billing can occur
+     */
+    private long timeOfConnection = 0;
+    private long timeOfDisconnection = 0;
+    
     //Event Management
     ArrayList listeners = new ArrayList();
     public String getState()
@@ -139,7 +146,7 @@ public class Call
         return remoteSdpDescription;
     }
 
-    void setState(String newStatus)
+    void setState(String newStatus) 
     {
         try
         {
@@ -150,7 +157,15 @@ public class Call
 
             if( console.isDebugEnabled() )
                 console.debug("setting call status to "+newStatus);
-
+            
+            /**
+             * When the call changes to connected we must start the time counter
+             */
+            if(newStatus.equals(Call.CONNECTED) && !callState.equals(Call.CONNECTED)){
+            	timeOfConnection = System.currentTimeMillis();
+            	
+            }
+            
             String oldStatus = callState;
             this.callState = newStatus;
             fireCallStatusChangedEvent(oldStatus);
@@ -222,6 +237,11 @@ public class Call
     {
         this.initialRequest = request;
     }
+    
+    Request getInitialRequest()
+    {
+        return this.initialRequest;
+    }
 
     String getDialogID()
     {
@@ -250,4 +270,12 @@ public class Call
             ( (CallListener) listeners.get(i)).callStateChanged(evt);
         }
     }
+
+	public long getTimeOfConnection() {
+		return timeOfConnection;
+	}
+
+	public void setTimeOfConnection(long timeOfConnection) {
+		this.timeOfConnection = timeOfConnection;
+	}
 }

@@ -49,7 +49,27 @@ public class CallBlockProcessing {
             URI forwardeeURI = request.getRequestURI();
             
             // Fire forwarded ok to pass the information to all listeners
-            sipManCallback.fireEnabledForward(forwardeeURI.toString());
+            sipManCallback.fireBlocked(forwardeeURI.toString());
+            
+        }
+        finally {
+            console.logExit();
+        }
+    }
+    
+    void unblockOK(ClientTransaction clientTransaction, Response response)
+    {
+        try {
+            console.logEntry();
+            
+            // Get the request that was accepted
+            Request request = clientTransaction.getRequest();
+            
+            // Save the forwardee URI
+            URI forwardeeURI = request.getRequestURI();
+            
+            // Fire forwarded ok to pass the information to all listeners
+            sipManCallback.fireUnblocked(forwardeeURI.toString());
             
         }
         finally {

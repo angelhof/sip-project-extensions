@@ -174,7 +174,6 @@ public class Proxy implements SipListener  {
 		}
 		
 		Request request = requestEvent.getRequest();
-		
         ProxyDebug.println("perase sto 0 To request in proxy klasomouno, request: "+request.toString());
 
 
@@ -474,10 +473,10 @@ public class Proxy implements SipListener  {
 			/*
 			 * We insert the listener for the UPDATE requests here 22-1-2017
 			 */
-	        ProxyDebug.println("perase to 3 To request in proxy klasomouno, request: "+request.toString());
-	        ProxyDebug.println("method for request klanompeis "+request.getMethod().toString());
+	        ProxyDebug.println("perase to 3 To request in proxy , request: "+request.toString());
+	        ProxyDebug.println("method for request  "+request.getMethod().toString());
 			if (request.getMethod().equals("FORWARD") || request.getMethod().equals("UNFORWARD")){
-		        ProxyDebug.println("UPDATE request in proxy klasomouno, request: "+request.toString());
+		        ProxyDebug.println("UPDATE request in proxy , request: "+request.toString());
 		        
 		        //send the response to the user
 		        
@@ -487,6 +486,20 @@ public class Proxy implements SipListener  {
 		        return;
 			}
 			
+			
+			/**
+			 * If the request is options and the content says duration
+			 */
+			if (request.getMethod().equals("OPTIONS") && request.getContent().toString().contains("Duration")){
+		        ProxyDebug.println("OPTION request in proxy , request: "+request.toString());
+		        
+		        //send the response to the user
+		        
+		        //registrar.processUserForward(request,sipProvider,serverTransaction);    
+        
+		        
+		        return;
+			}
 
 			// we use a SIP registrar:
 			if ( request.getMethod().equals(Request.REGISTER) ) {

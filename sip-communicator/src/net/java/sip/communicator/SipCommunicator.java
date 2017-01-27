@@ -520,6 +520,9 @@ public class SipCommunicator
     {
         try {
             console.logEntry();
+            /**
+             * TODO: Send the call time to the server
+             */
             sipManager.endCall(evt.getAssociatedInterlocutor().getID());
             //no further action should be taken here. Close
             //(mediaManager.closeStream guiManager.removeInterlocutor)
