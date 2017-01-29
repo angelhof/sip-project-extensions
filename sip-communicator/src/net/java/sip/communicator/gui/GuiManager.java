@@ -758,6 +758,7 @@ public class GuiManager
                                       String userName,
                                       char[] password)
     {
+    	console.logEntry();
         if (authenticationSplash != null)
             authenticationSplash.dispose();
         authenticationSplash = new AuthenticationSplash(phoneFrame, true);
@@ -770,6 +771,9 @@ public class GuiManager
         if(realm != null)
             authenticationSplash.realmValueLabel.setText(new String(realm));
         authenticationSplash.show();
+        console.debug(authenticationSplash.userName);
+        console.debug(new String(authenticationSplash.password));
+        console.logExit();
     }
 
     public String getAuthenticationUserName()

@@ -613,7 +613,7 @@ public class SipManager
      */
     public void register() throws CommunicationsException
     {
-        register(currentlyUsedURI);
+        register(currentlyUsedURI, "");
     }
 
     /**
@@ -621,17 +621,18 @@ public class SipManager
      * @param publicAddress
      * @throws CommunicationsException
      */
-    public void register(String publicAddress) throws CommunicationsException
+    public void register(String publicAddress, String password) throws CommunicationsException
     {
         try {
             console.logEntry();
             console.debug(publicAddress);
+            console.debug(password);
 
             publicAddress = checkAndCompleteAddress(publicAddress);
 
             this.currentlyUsedURI = publicAddress;
             registerProcessing.register( registrarAddress, registrarPort,
-                                  registrarTransport, registrationsExpiration);
+                                  registrarTransport, registrationsExpiration, password);
 
              //at this point we are sure we have a sip: prefix in the uri
             // we construct our pres: uri by replacing that prefix.
@@ -673,7 +674,7 @@ public class SipManager
                                         initialCredentials.getUserName()) ;
             PropertiesDepot.storeProperties();
 
-            register(initialCredentials.getUserName());
+            register(initialCredentials.getUserName(), new String(initialCredentials.getPassword()));
 
             //at this point a simple register request has been sent and the global
             //from  header in SipManager has been set to a valid value by the RegisterProcesing

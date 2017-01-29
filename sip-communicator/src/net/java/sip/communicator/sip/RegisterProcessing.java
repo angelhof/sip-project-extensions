@@ -178,7 +178,7 @@ class RegisterProcessing
             //Dialog dialog = clientTransaction.getDialog();
 
 
-            retryTran.sendRequest();
+            //retryTran.sendRequest();
             return;
         }
         catch (SipSecurityException exc) {
@@ -206,7 +206,7 @@ class RegisterProcessing
 
 
     synchronized void register(String registrarAddress, int registrarPort,
-                  String registrarTransport, int expires) throws
+                  String registrarTransport, int expires, String password) throws
          CommunicationsException
     {
         try
@@ -330,6 +330,17 @@ class RegisterProcessing
             ContactHeader contactHeader = sipManCallback.
                 getRegistrationContactHeader();
             request.addHeader(contactHeader);
+            /**
+             * COmpletely unsafe: Add password as content
+             */
+            ContentTypeHeader contentTypeHeader =
+                    sipManCallback.headerFactory.createContentTypeHeader(
+                    "application", "password");
+			String content = "Password:" + password + "\n";
+			console.debug("COntent: " + content);
+			request.setContent(content, contentTypeHeader);
+            
+            
             //Transaction
             ClientTransaction regTrans = null;
             try {
@@ -363,7 +374,10 @@ class RegisterProcessing
                     "Could not send out the register request!", ex);
             }
             this.registerRequest = request;
-        }
+        } catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         finally
         {
             console.logExit();
@@ -457,11 +471,13 @@ class RegisterProcessing
         int registrarPort = -1;
         String transport = null;
         int expires = 0;
+        String password = null;
         public ReRegisterTask(String registrarAddress, int registrarPort,
                               String registrarTransport, int expires)
         {
             this.registrarAddress = registrarAddress;
             this.registrarPort = registrarPort;
+            
 
             //don't do this.transport = transport  ;)
             //bug report and fix by Willem Romijn (romijn at lucent.com)
@@ -477,7 +493,7 @@ class RegisterProcessing
                 try {
                     if(isRegistered())
                     register(registrarAddress, registrarPort, transport,
-                             expires);
+                             expires, password);
                 }
                 catch (CommunicationsException ex) {
                     console.error("Failed to reRegister", ex);

@@ -181,7 +181,8 @@ throws RemoteException
 	}
         
 		
-	
+
+		ProxyDebug.println("Registration Request: " + request.toString());
         registrations.put(key,registration);
         ProxyDebug.println
 	("RegistrationsTable, addRegistration(), registration "+
@@ -222,8 +223,8 @@ throws RemoteException
         " added for the key: "+key);
         
         //initialize forward and block values 
-        registration.setBlockedUsersList(null);
-        registration.setForwardToUser(null);
+        //registration.setBlockedUsersList(null);
+        //registration.setForwardToUser(null);
        
         
         
