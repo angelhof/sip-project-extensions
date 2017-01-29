@@ -1464,10 +1464,11 @@ public class SipManager
                 console.debug("forwarding to address=" + address);
             }
             // TODO: Implement
-//            RegistrationEvent evt = new RegistrationEvent(address);
-//            for (int i = listeners.size() - 1; i >= 0; i--) {
-//                ( (CommunicationsListener) listeners.get(i)).registering(evt);
-//            }
+            BlockEvent evt = new BlockEvent(address);
+            for (int i = listeners.size() - 1; i >= 0; i--) {
+                ( (CommunicationsListener) listeners.get(i)).blocking(evt);
+            }
+            
         }
         finally {
             console.logExit();
@@ -1521,10 +1522,11 @@ public class SipManager
                 console.debug("Blocked: " + address);
             }
          // TODO: Implement
-//          RegistrationEvent evt = new RegistrationEvent(address);
-//          for (int i = listeners.size() - 1; i >= 0; i--) {
-//              ( (CommunicationsListener) listeners.get(i)).registering(evt);
-//          }
+          BlockEvent evt = new BlockEvent(address);
+          for (int i = listeners.size() - 1; i >= 0; i--) {
+              ( (CommunicationsListener) listeners.get(i)).blocking(evt);
+          }
+          
         }
         finally {
             console.logExit();
