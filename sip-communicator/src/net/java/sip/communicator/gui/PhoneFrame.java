@@ -111,6 +111,7 @@ class PhoneFrame
     Border border14;
     BoxLayout boxLayout21 = new BoxLayout(videoPane, BoxLayout.Y_AXIS);
     Border border15;
+    public String frwed = "None yet";
 
     private GuiManager guiManCallback = null;
     BorderLayout borderLayout4 = new BorderLayout();
@@ -139,11 +140,14 @@ class PhoneFrame
      */
     JPanel blockPanel = new JPanel();
     JButton blockButton = new JButton();
-    JButton unblockButton = new JButton();
-    JComboBox blockBox = new JComboBox();
     
-    //BorderLayout borderLayoutBlockUnblock = new BorderLayout();
-    //JPanel blockAndUnblockPanel = new JPanel();
+    String[] blockedpeople = {"Unblock", "Katerina", "Chris"};
+    JComboBox unblockButton = new JComboBox(blockedpeople);
+    
+    JPanel forwardl = new JPanel();
+    JLabel frwl = new JLabel();
+    Font myFont = new Font("Serif", Font.ITALIC | Font.BOLD, 12);
+    
     BorderLayout borderLayoutDialForwardBlock = new BorderLayout();
     JPanel dialForwardBlockPanel = new JPanel();
     
@@ -190,26 +194,31 @@ class PhoneFrame
         forwardPanel.setLayout(borderLayout41);
         forwardPanel.setBorder(border71);
         
+        borderLayout41.setHgap(10);
+        forwardl.setLayout(borderLayout41);
+        forwardl.setBorder(border71);
+        
         forwardButton.setEnabled(false);
         forwardButton.setMnemonic('F');
         forwardButton.setText("Forward");
         disableForwardButton.setEnabled(false);
         disableForwardButton.setMnemonic('D');
-        disableForwardButton.setText("Dis. Forw.");
+        disableForwardButton.setText("Disable Forward");
+        
+        
+        frwl.setText("Forward to: "+frwed);
+        frwl.setFont(myFont);
         
         blockButton.setEnabled(false);
-        blockButton.setMnemonic('F');
+        blockButton.setMnemonic('B');
         blockButton.setText("Block");
         unblockButton.setEnabled(false);
-        unblockButton.setMnemonic('D');
-        unblockButton.setText("Unblock");
-
+        //unblockButton.setRenderer(new MyComboBoxRenderer("Unblock"));
+        unblockButton.setSelectedIndex(0);
+        //unblockButton.addItem("Ariadni");
         
         this.getContentPane().add(dialForwardBlockPanel, BorderLayout.NORTH);
         dialForwardBlockPanel.add(dialPanel, BorderLayout.NORTH);
-        
-//        this.getContentPane().add(dialForwardBlockPanel, BorderLayout.NORTH);
-//        dialForwardBlockPanel.add(forwardPanel, BorderLayout.SOUTH);
         
         dialForwardBlockPanel.add(forwardPanel, BorderLayout.CENTER);
         dialForwardBlockPanel.add(blockPanel, BorderLayout.SOUTH);
@@ -219,6 +228,7 @@ class PhoneFrame
         
         forwardPanel.add(forwardButton, BorderLayout.EAST);
         forwardPanel.add(disableForwardButton, BorderLayout.WEST);
+        forwardPanel.add(frwl, BorderLayout.SOUTH);
         
         blockPanel.add(blockButton, BorderLayout.EAST);
         blockPanel.add(unblockButton, BorderLayout.WEST);
@@ -324,5 +334,6 @@ class PhoneFrame
 //            System.exit(0);
 //        }
 //    }
+    
 
 }
