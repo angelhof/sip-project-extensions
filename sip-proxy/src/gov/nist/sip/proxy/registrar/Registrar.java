@@ -183,6 +183,33 @@ implements RegistrarAccess {
 			e.printStackTrace();
 		}
 	}
+	
+	public static void appendFile(String outFile, String text) {
+		// we read this file to obtain the options
+	
+		
+		try{
+			FileWriter fileWriter = new FileWriter(outFile,true);
+			PrintWriter pw = new PrintWriter(fileWriter,true);
+
+			if (text==null) {
+				pw.println();
+			}
+			else
+			{
+				pw.println(text);
+			}
+
+			pw.close();
+			fileWriter.close();
+		}
+		catch(Exception e) {
+			if (ProxyDebug.debug)  {
+				ProxyDebug.println("Error in append file");
+			}
+			e.printStackTrace();
+		}
+	}
 
 	public void setExpiresTime(int expiresTime) {
 		EXPIRES_TIME_MAX=expiresTime;
@@ -1271,8 +1298,7 @@ implements RegistrarAccess {
 								
 				if (updateresult){
 					//if we are here everything went as planned
-					Response response=
-							messageFactory.createResponse(Response.OK,request);
+					Response response=messageFactory.createResponse(Response.OK,request);
 					ContentTypeHeader hbill = headerFactory.createContentTypeHeader("application", "billing");
 					
 					if (registration.getuserCategory().equals("Normal")){
@@ -1282,7 +1308,15 @@ implements RegistrarAccess {
 						chargement = durationTimeInSec * Chargement.premiumChargement; 
 					}
 					
+					String chargewritable = String.format( "%.2f",chargement);
+					
 					response.setContent("Chargement: "+chargement.toString(), hbill);
+					
+					//file for appending all the charges over the users
+					String fileForCharges = "src/gov/nist/sip/proxy/configuration/UserCharges.txt";
+					String textToAppend = "User: "+key+", Category: "+registration.getuserCategory()+
+							", Chargement: " + chargewritable;
+					this.appendFile(fileForCharges, textToAppend);
 
 					if (serverTransaction!=null)
 						serverTransaction.sendResponse(response);
