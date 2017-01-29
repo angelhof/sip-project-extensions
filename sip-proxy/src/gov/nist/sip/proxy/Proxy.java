@@ -504,8 +504,9 @@ public class Proxy implements SipListener  {
 		        
 		        return;
 			}
+			
 			/**
-			 * If the request is options and the content says duration
+			 * If the request is options and the content says duration 29-1-2017
 			 */
 			if (request.getMethod().equals("OPTIONS") && request.getContent().toString().contains("Duration")){
 		        ProxyDebug.println("OPTION request in proxy , request: "+request.toString());

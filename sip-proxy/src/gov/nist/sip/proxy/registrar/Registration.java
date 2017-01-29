@@ -26,6 +26,9 @@ public class Registration {
 	
 	//extra field for category of user
 	protected String userCategory;
+	
+	// extra field for password of the user
+	protected String password;
 
     protected FromHeader fromHeader;
     protected ToHeader toHeader;
@@ -46,6 +49,7 @@ public class Registration {
         BlockedUsersList = new Vector();
         setForwardToUser (null);
         setuserCategory ("Normal");
+        setPassword("");
     }
     
     protected ExportedBinding exportBinding() {
@@ -98,6 +102,14 @@ public class Registration {
 
     public void setContactsList(Vector contactsList) {
         this.contactsList=contactsList;
+    }
+    
+    public String getPassword () {
+    	return password;
+    }
+    
+    public void setPassword( String passw) {
+    	this.password = passw;
     }
     
     public void addContactHeader(ContactHeader contactHeader) {
@@ -273,7 +285,11 @@ public class Registration {
             retval.append(" category=\""+this.getuserCategory()+"\" ");
         }
         
-        retval.append(" uri=\""+key+"\"> ");
+        if (this.getPassword()!=null) {
+            retval.append(" password=\""+this.getPassword()+"\" ");
+        }
+        
+        retval.append("uri=\""+key+"\"> ");
      
         for( int i=0; i<contactsList.size();i++) {
             retval.append("     <CONTACT ");

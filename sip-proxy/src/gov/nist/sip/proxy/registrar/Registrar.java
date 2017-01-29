@@ -303,7 +303,8 @@ implements RegistrarAccess {
          than the value stored for that binding.  Otherwise, the update
          MUST be aborted and the request fails.
 			 */
-
+			
+			
 			if ( !hasContactHeaders(request) ) {
 				Vector contactHeaders=getContactHeaders(key);
 				Response response=messageFactory.createResponse
@@ -323,6 +324,7 @@ implements RegistrarAccess {
 					ProxyDebug.println
 					("Registrar, processRegister(), response sent:"+response.toString());
 				}
+				
 				// if registrations table has changed we should update the registrations.xml file
 				this.writeXMLRegistrations();
 				
@@ -395,10 +397,72 @@ implements RegistrarAccess {
 				}
 				return;
 			}
+			
+			
+			
+			/*
+			 * 29-1-2017
+			 * Check if the username and password matches to a current registration
+			 * If he username is the same and the passsword is not equal then we send 
+			 * BAD Responese to the sender
+			 */
+			
+			String content = new String( request.getRawContent());
+			String pass = content;
+			String username = getKey(request);
+						
+			ProxyDebug.println("User: "+username+" Content of request: "+pass + " me tou kwsta ta skoulikia: " + content);
+
+			
+			try{
+				pass = content.split("Password:")[1];
+				pass = pass.split("\n")[0];
+				
+			}
+			catch(Exception e){
+				e.printStackTrace();
+				ProxyDebug.println("Could not get proper password for User: "+username);
+			}
+			
+			ProxyDebug.println("User: "+username+" trying to connect with password: "+pass);
 
 
 			if ( registrationsTable.hasRegistration(key) ) {
+				
+				
+				Hashtable registrations = registrationsTable.getRegistrations();
+				Registration registration=(Registration) registrations.get(username);
+				
+				ProxyDebug.println("Given Password: "+pass+" Saved Password: "+registration.getPassword());
+				if (!registration.getPassword().equals(pass)){
+					
+					// username same and password not the same :(
+					
+					if (ProxyDebug.debug) {
+						ProxyDebug.println
+						("Registrar, processRegister(), username same and password not the same!");
+					}
+					Response response=messageFactory.createResponse
+							(Response.UNAUTHORIZED,request);
+					if (serverTransaction!=null)
+						serverTransaction.sendResponse(response);
+					else sipProvider.sendResponse(response);
+					if (ProxyDebug.debug) {
+						ProxyDebug.println
+						("Registrar, processRegister(), UNAUTHORIZED response sent:");
+						ProxyDebug.print(response.toString());
+					}
+					return ;
+					
+				}
+				
+				
+				
+				
 				registrationsTable.updateRegistration(key,request);
+				
+				// if registrations table has changed we should update the registrations.xml file
+				this.writeXMLRegistrations();
 
 				if (  proxy.getConfiguration().rfc2543Compatible && 
 						key.indexOf(":5060") < 0 ) {
@@ -466,6 +530,9 @@ implements RegistrarAccess {
 				}
 
 				registrationsTable.addRegistration(key,request);
+				
+				// if registrations table has changed we should update the registrations.xml file
+				this.writeXMLRegistrations();
 
 				if (proxy.getConfiguration().rfc2543Compatible &&
 						key.indexOf(":5060") < 0) {
@@ -479,6 +546,9 @@ implements RegistrarAccess {
 							+ "adding proper registration for " + key);
 
 					registrationsTable.addRegistration(key, request);
+					
+					// if registrations table has changed we should update the registrations.xml file
+					this.writeXMLRegistrations();
 				}
 
 				// we have to forward SUBSCRIBE if the presence server
@@ -1146,6 +1216,84 @@ implements RegistrarAccess {
 	public boolean foundInBlockedUsersList(String caller, String callee){
 		boolean result = registrationsTable.inBlockedUsersListRegistration(caller,callee);
 		return result;
+	}
+	
+	/*
+	 * process the OPTION request
+	 */
+	
+	public void processUserBilling(Request request, SipProvider sipProvider,
+			ServerTransaction serverTransaction ){
+		try{
+			MessageFactory messageFactory=proxy.getMessageFactory();
+
+			String key=request.getHeader(FromHeader.NAME).toString();
+
+			// Add the key if it is a new user:
+			if (ProxyDebug.debug){
+				ProxyDebug.println
+				("Registrar, processUserBilling(), key: \""+key+"\"");
+			}
+			if (key==null){
+				if (ProxyDebug.debug) {
+					ProxyDebug.println
+					("Registrar, processUserBilling(), key is null"+
+							" 400 INVALID REQUEST replied");
+				}
+				Response response=messageFactory.createResponse
+						(Response.BAD_REQUEST,request);
+				if (serverTransaction!=null)
+					serverTransaction.sendResponse(response);
+				else sipProvider.sendResponse(response);
+				return ;
+			}
+
+
+			if ( registrationsTable.hasRegistration(key) ) {
+				ProxyDebug.println("Content of request is: "+request.getContent());
+				ProxyDebug.println("URI of request is: "+request.getRequestURI());
+				ProxyDebug.println("Key is: "+key.toString());
+				
+				boolean updateresult = false;
+				
+				String BlockID = null;
+				String Sender = key.toString();
+				
+					
+		
+			}
+			
+			
+			if (ProxyDebug.debug) {
+				ProxyDebug.println
+				("No valid User To Charge the Bill");
+			}
+			Response response=messageFactory.createResponse
+					(Response.BAD_REQUEST,request);
+			if (serverTransaction!=null)
+				serverTransaction.sendResponse(response);
+			else sipProvider.sendResponse(response);
+			if (ProxyDebug.debug) {
+				ProxyDebug.println
+				("Registrar, processUserBilling(), response sent:");
+				ProxyDebug.print(response.toString());
+			}
+			return ;
+
+		
+		} catch (SipException ex) {
+			if (ProxyDebug.debug) {
+				ProxyDebug.println("Registrar.processUserBilling exception raised:");
+				ProxyDebug.logException(ex);
+			}
+		} catch(Exception ex) {
+			if (ProxyDebug.debug) {
+				ProxyDebug.println
+				("Registrar, processUserBilling(), internal error, "+
+						"exception raised:");
+				ProxyDebug.logException(ex);
+			}
+		}
 	}
 
 	

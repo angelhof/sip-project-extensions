@@ -166,7 +166,22 @@ throws RemoteException
 	FromHeader fromHeader = (FromHeader)request.getHeader(FromHeader.NAME);
 	registration.fromHeader = fromHeader;
         
+	
+	//set password
+	String content = new String( request.getRawContent());
+	String pass = content;
+	try{
+		pass = content.split("Password:")[1];
+		pass = pass.split("\n")[0];
+		registration.setPassword(pass);
+	}
+	catch(Exception e){
+		e.printStackTrace();
+		 ProxyDebug.println("Add Registration Exception");
+	}
         
+		
+	
         registrations.put(key,registration);
         ProxyDebug.println
 	("RegistrationsTable, addRegistration(), registration "+
