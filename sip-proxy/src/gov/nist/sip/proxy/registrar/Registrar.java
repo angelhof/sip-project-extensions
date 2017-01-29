@@ -921,6 +921,113 @@ implements RegistrarAccess {
 
 
 	
+	/*
+	 * Add the response to the user who wants to perform forwarding 22-1-2017
+	 */
+	public synchronized void processUserInfo(Request request, SipProvider sipProvider,
+			ServerTransaction serverTransaction, HeaderFactory headerFactory ) {
+		try{
+			MessageFactory messageFactory=proxy.getMessageFactory();
+
+			String key=getKey(request);
+
+			// Add the key if it is a new user:
+			if (ProxyDebug.debug){
+				ProxyDebug.println
+				("Registrar, processUserInfo(), key: \""+key+"\"");
+			}
+			if (key==null){
+				if (ProxyDebug.debug) {
+					ProxyDebug.println
+					("Registrar, processUserInfo(), key is null"+
+							" 400 INVALID REQUEST replied");
+				}
+				Response response=messageFactory.createResponse
+						(Response.BAD_REQUEST,request);
+				if (serverTransaction!=null)
+					serverTransaction.sendResponse(response);
+				else sipProvider.sendResponse(response);
+				return ;
+			}
+
+
+			if ( registrationsTable.hasRegistration(key) ) {
+					Hashtable registrations=registrationsTable.getRegistrations();
+			        Registration registration=(Registration)registrations.get(key);
+			        
+					//if we are here everything went as planned
+					Response response=
+							messageFactory.createResponse(Response.OK,request);
+					
+					ContentTypeHeader hbill = headerFactory.createContentTypeHeader("application", "info");
+					
+					String textToSend = "";
+					if(registration.getForwardToUser()!= null)
+						textToSend = "Forward:"+registration.getForwardToUser()+"\n";
+					else
+						textToSend = "Forward:\n";
+
+					
+					Vector BlockedUsersList = registration.getBlockedUsersList();
+					if (BlockedUsersList != null){
+				        Iterator itr = BlockedUsersList.iterator();
+				    	while (itr.hasNext()){
+				    		String CurrentBlockedUser = itr.next().toString();
+				    		textToSend = textToSend + "BlockedUser:"+CurrentBlockedUser+"\n";
+				    
+				    	}          
+			        }
+					
+					response.setContent(textToSend, hbill);
+
+					if (serverTransaction!=null)
+						serverTransaction.sendResponse(response);
+					else sipProvider.sendResponse(response); 
+
+					if (ProxyDebug.debug)  {
+						ProxyDebug.println
+						("Registrar, processUserInfo(), response sent:");
+						ProxyDebug.print(response.toString());
+					}
+					
+					return;
+				
+			}
+			
+			
+			if (ProxyDebug.debug) {
+				ProxyDebug.println
+				("No valid User to send him INFO");
+			}
+			Response response=messageFactory.createResponse
+					(Response.BAD_REQUEST,request);
+			if (serverTransaction!=null)
+				serverTransaction.sendResponse(response);
+			else sipProvider.sendResponse(response);
+			if (ProxyDebug.debug) {
+				ProxyDebug.println
+				("Registrar, processUserInfo(), response sent:");
+				ProxyDebug.print(response.toString());
+			}
+			return ;
+
+		
+		} catch (SipException ex) {
+			if (ProxyDebug.debug) {
+				ProxyDebug.println("Registrar.processUserInfo exception raised:");
+				ProxyDebug.logException(ex);
+			}
+		} catch(Exception ex) {
+			if (ProxyDebug.debug) {
+				ProxyDebug.println
+				("Registrar, processUserInfo(), internal error, "+
+						"exception raised:");
+				ProxyDebug.logException(ex);
+			}
+		}
+		
+	}
+	
 	
 	/*
 	 * Add the response to the user who wants to perform forwarding 22-1-2017
@@ -1085,9 +1192,6 @@ implements RegistrarAccess {
 				}
 				
 				
-				
-				
-				
 				if (updateresult){
 					//if we are here everything went as planned
 					Response response=
@@ -1223,7 +1327,6 @@ implements RegistrarAccess {
 		
 		
 		while (currentForwardee!=null){
-			ProxyDebug.println("mouniasa 0: "+currentForwardee);
 
 			currentRegistration = (Registration)registrations.get(currentForwardee);
 			
@@ -1231,12 +1334,7 @@ implements RegistrarAccess {
 				return null;
 			}
 			
-			ProxyDebug.println("mouniasa 1: "+currentRegistration);
-
-			
 			currentForwardee = currentRegistration.getForwardToUser();
-			
-			ProxyDebug.println("Iteration current forwardee: "+currentForwardee);
 		}
 		
 		return currentRegistration.getKey();

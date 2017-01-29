@@ -505,6 +505,22 @@ public class Proxy implements SipListener  {
 		        return;
 			}
 			
+			/*
+			 * We insert the listener for the INFO request in order to give the user his 
+			 * Blocked Users List and his Forward callee if need be by the GUI
+			 */
+			if (request.getMethod().equals("INFO") ) 
+			{
+		        ProxyDebug.println("INFO request in proxy, request: "+request.toString());
+		        
+		        //send the response to the user
+		        
+		        registrar.processUserInfo(request,sipProvider,serverTransaction, headerFactory);    
+		        
+		        return;
+			}
+			
+			
 			/**
 			 * If the request is options and the content says duration 29-1-2017
 			 */
@@ -735,6 +751,28 @@ public class Proxy implements SipListener  {
 				return;
 			}
 
+			//Check if the caller is the same as the final forwardee
+			ProxyDebug.println("Check if the caller is the same as the final forwardee");
+			String key=registrar.getKey(request);
+			String finalForwardee = registrar.findFinalForwardee(key);
+			
+			if (finalForwardee != null && finalForwardee.equals(caller)) {
+				ProxyDebug.println("finalforwardee is the same as the caller");		
+				Response response=messageFactory.createResponse
+						(Response.BAD_REQUEST,request);
+				if (serverTransaction!=null)
+					serverTransaction.sendResponse(response);
+				else sipProvider.sendResponse(response);
+				if (ProxyDebug.debug) {
+					ProxyDebug.println
+					("Registrar, FinalForwardee same as the "
+							+ "caller Cycle will be created, response sent:");
+					ProxyDebug.print(response.toString());
+				}
+				
+				
+				return;
+			}
 			
 			/**
 			 * Changes request based on final forwardee
@@ -754,7 +792,6 @@ public class Proxy implements SipListener  {
 				return;
 			}
 			request = newrequest;
-			// request = transformRequestBasedOnForwardings(request);
 			
 			if ( registrar.hasRegistration(request)  ) {
 
@@ -785,14 +822,28 @@ public class Proxy implements SipListener  {
 								" location service");
 					
 					// 4. Forward the request statefully to each target Section 16.6.:
+					
+					/*
 					ProxyDebug.println("krakovia target URI LIST: "+targetURIList.toString());
 					ProxyDebug.println("krakovia sipProvider: "+sipProvider.toString());
 					ProxyDebug.println("krakovia request: "+request.toString());
 					ProxyDebug.println("krakovia serverTransaction: "+request.getRequestURI());
-
+					*/
+					
 					requestForwarding.forwardRequest
 					(targetURIList,sipProvider,
 							request,serverTransaction,true);
+					
+					/*
+					 * Here we have an invite request and we should run a method which runs in a thread
+					 * and polls over the users in order to charge the caller adeptly
+					 * Pathological Scenario
+					 */
+					/*
+					new Thread(() -> {
+						this.callPolling( caller, callee);
+					}).start();
+					*/
 
 					return;
 				} else {
@@ -879,6 +930,10 @@ public class Proxy implements SipListener  {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	private void callPolling (String caller, String callee){
+		
 	}
 	
 	

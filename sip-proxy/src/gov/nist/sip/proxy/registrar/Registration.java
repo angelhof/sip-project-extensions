@@ -171,8 +171,10 @@ public class Registration {
         	if (BlockedList != null){
         		// check if this block is inside the list
             	Iterator itr = BlockedList.iterator();
+            	String CurrentBlockedUser = null;
             	while (itr.hasNext()){
-            		String CurrentBlockedUser = itr.toString();
+            		CurrentBlockedUser = itr.next().toString();
+
             		if (CurrentBlockedUser.equals(newDesignatedBlockUser)){
             			result = false;
             			return result;
