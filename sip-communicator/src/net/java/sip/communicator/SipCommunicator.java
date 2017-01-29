@@ -115,7 +115,7 @@ public class SipCommunicator
 
             guiManager = new GuiManager();
             mediaManager = new MediaManager();
-            sipManager = new SipManager();
+            sipManager = new SipManager(guiManager);
             simpleContactList = new SimpleContactList();
 
             guiManager.addUserActionListener(this);
@@ -478,7 +478,26 @@ public class SipCommunicator
     
     
     public void handleUnblockRequest(UserUnblockEvent evt){
-    	
+    	try {
+    		console.logEntry();
+            String blockee = (String) evt.getSource();
+            
+        	try {
+            	sipManager.unblock(blockee);
+            }
+            catch (CommunicationsException exc) {
+                console.error(
+                        "An exception occurred while trying to set blocking, exc");
+                    console.showException(
+                        "Failed to set blocking!\n"
+                        + exc.getMessage() + "\n"
+                        + "This is a warning only. The phone would still function",
+                        exc);
+                }
+        }
+        finally {
+            console.logExit();
+        }
     }
     
     public void handleDialRequest(UserCallInitiationEvent evt)
@@ -781,6 +800,49 @@ public class SipCommunicator
         finally {
             console.logExit();
         }
+    }
+    
+    public void blocking(BlockEvent evt){
+    	try {
+            console.logEntry();
+            String blockee = evt.getReason().split(":")[1].split("@")[0];
+            guiManager.phoneFrame.blockPanel.remove(guiManager.phoneFrame.unblockButton);
+            guiManager.phoneFrame.unblockButton.addItem(blockee);
+            guiManager.phoneFrame.blockPanel.add(guiManager.phoneFrame.unblockButton, BorderLayout.WEST);
+        }
+        finally {
+            console.logExit();
+        }
+    }
+    
+    public void unblockingGui(BlockEvent evt){	
+    	try{
+    		console.logEntry();
+	        String unblock_usr = evt.getReason().split(":")[1].split("@")[0];
+	        
+    		if(!"Blocked People".equals(unblock_usr)){
+    			console.debug("Se gamaw" + unblock_usr);
+    			guiManager.phoneFrame.blockPanel.remove(guiManager.phoneFrame.unblockButton);
+    			guiManager.phoneFrame.unblockButton.removeItem(unblock_usr);
+                guiManager.phoneFrame.blockPanel.add(guiManager.phoneFrame.unblockButton, BorderLayout.WEST);
+                
+	        }
+    	}
+    	finally{
+    		console.logExit();
+    	}
+    }
+    
+    public void forwardedOKGuiChange(ForwardEvent evt){
+    	try {
+            console.logEntry();
+            
+            guiManager.phoneFrame.frwl.setText("Forward to: " + evt.getReason().split("@")[0].split(":")[1]);
+        }
+        finally {
+            console.logExit();
+        }
+    	
     }
 
     public void unregistered(RegistrationEvent evt)
@@ -1090,12 +1152,4 @@ public class SipCommunicator
 
         return SubscriptionAuthorizationResponse.createResponse(response);
     }
-
-	@Override
-	public void blocking(BlockEvent evt) {
-		// TODO Auto-generated method stub
-		
 	}
-
-
-}

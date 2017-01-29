@@ -109,7 +109,7 @@ public class GuiManager
         initLookAndFeel();
     }
 
-    private PhoneFrame       phoneFrame   = null;
+    public PhoneFrame       phoneFrame   = null;
     private ContactListFrame contactList  = null;
     private ConfigFrame      configFrame  = null;
     private ArrayList        listeners    = null;
@@ -399,9 +399,7 @@ public class GuiManager
         for (int i = listeners.size() - 1; i >= 0; i--) {
             ( (UserActionListener) listeners.get(i)).handleUnblockRequest(unblEvt);
         }
-        if(!"Unblock".equals(unblock_usr)){
-        	phoneFrame.unblockButton.removeItem(unblock_usr);
-        }
+
     }
     
     void disableforwardButton_actionPerformed(EventObject evt)

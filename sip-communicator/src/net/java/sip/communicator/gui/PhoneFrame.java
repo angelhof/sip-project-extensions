@@ -73,7 +73,7 @@ import javax.swing.border.*;
  * @version 1.1
  *
  */
-class PhoneFrame
+public class PhoneFrame
     extends JFrame
 {
     BorderLayout borderLayout1 = new BorderLayout();
@@ -138,14 +138,14 @@ class PhoneFrame
     /**
      * Block & Unblock GUI
      */
-    JPanel blockPanel = new JPanel();
+    public JPanel blockPanel = new JPanel();
     JButton blockButton = new JButton();
     
-    String[] blockedpeople = {"Unblock", "Katerina", "Chris"};
-    JComboBox unblockButton = new JComboBox(blockedpeople);
+    String[] blockedpeople = {"Blocked People"};
+    public JComboBox unblockButton = new JComboBox(blockedpeople);
     
     JPanel forwardl = new JPanel();
-    JLabel frwl = new JLabel();
+    public JLabel frwl = new JLabel();
     Font myFont = new Font("Serif", Font.ITALIC | Font.BOLD, 12);
     
     BorderLayout borderLayoutDialForwardBlock = new BorderLayout();
@@ -215,7 +215,7 @@ class PhoneFrame
         unblockButton.setEnabled(false);
         //unblockButton.setRenderer(new MyComboBoxRenderer("Unblock"));
         unblockButton.setSelectedIndex(0);
-        //unblockButton.addItem("Ariadni");
+        //unblockButton.addIt
         
         this.getContentPane().add(dialForwardBlockPanel, BorderLayout.NORTH);
         dialForwardBlockPanel.add(dialPanel, BorderLayout.NORTH);
@@ -232,6 +232,7 @@ class PhoneFrame
         
         blockPanel.add(blockButton, BorderLayout.EAST);
         blockPanel.add(unblockButton, BorderLayout.WEST);
+        
         
     }
 
