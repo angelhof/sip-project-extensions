@@ -1826,6 +1826,7 @@ public class SipManager
                 getClientTransaction();
             if (clientTransaction == null) {
                 console.debug("ignoring a transactionless response");
+                console.debug(responseReceivedEvent.getResponse());
                 return;
             }
             Response response = responseReceivedEvent.getResponse();
@@ -2168,18 +2169,23 @@ public class SipManager
 		 * - Show the charge somewhere
 		 * - Write the charge in a file
 		 */
-    	JOptionPane.showMessageDialog(null, "My Goodness, this is so concise");
+    	String content = new String(response.getRawContent());
+    	String chargeString = content.split("Chargement: ")[1];
+    	Double charge = new Double(chargeString);
+    	String formattedCharge = String.format("%.2f", charge);
+    	JOptionPane.showMessageDialog(null, "Charge: " + formattedCharge);
     	
-    	
+    	String localUser = this.getLocalUser();
+    	console.debug(localUser);
     	/**
     	 * Write the chargement in a file
     	 */
     	BufferedWriter out = null;
     	try  
     	{
-    	    FileWriter fstream = new FileWriter("chargements.txt", true); //true tells to append data.
+    	    FileWriter fstream = new FileWriter(localUser + "_chargements.txt", true); //true tells to append data.
     	    out = new BufferedWriter(fstream);
-    	    out.write("Time: " + " - Charge: " + "\n");
+    	    out.write("Charge: " + formattedCharge + "\n");
     	}
     	catch (IOException e)
     	{

@@ -504,50 +504,7 @@ public class CallProcessing
             String callState = call.getState();
             Dialog callDialog = call.getDialog();
             if(callState.equals(Call.CONNECTED)){
-            	long currentTime = System.currentTimeMillis();
-            	long callDuration = currentTime - call.getTimeOfConnection();
-            	console.debug("Duration:" + callDuration);
-            	console.debug(call.getInitialRequest().toString());
-            	/**
-            	 * Here we can have caller for the FromHeader of the initialRequest
-            	 * TODO: Form the request so that the server can handle it and charge us
-            	 */
-            	//Are we the caller
-                URI callerURI = ( (FromHeader) call.getInitialRequest().getHeader(FromHeader.NAME)).
-                		getAddress().getURI();
-                if (callerURI.isSipURI()) {
-                    String callerUser = ( (SipURI) callerURI).getUser();
-                    String localUser = sipManCallback.getLocalUser();
-                    boolean assertUserMatch = Boolean.valueOf(Utils.getProperty("net.java.sip.communicator.sip.FAIL_CALLS_ON_DEST_USER_MISMATCH")).booleanValue();
-                    //user info is case sensitive according to rfc3261
-                    if (!(!callerUser.equals(localUser) && assertUserMatch))
-                    {
-                        
-                    	try{
-                    		Request timeOfHangupRequest = callDialog.createRequest("OPTIONS");
-                    		console.debug("Time of hangup request: " + timeOfHangupRequest);
-                    		try {
-                    			ContentTypeHeader contentTypeHeader =
-                                    sipManCallback.headerFactory.createContentTypeHeader(
-                                    "application", "duration");
-                    			String content = "Duration:" + String.valueOf(callDuration) + "\n";
-                    			console.debug("COntent: " + content);
-        						timeOfHangupRequest.setContent(content, contentTypeHeader);
-        					} catch (ParseException e) {
-        						// TODO Auto-generated catch block
-        						e.printStackTrace();
-        					}
-                    		timeOfHangupRequest.setHeader((ToHeader)timeOfHangupRequest.getHeader(FromHeader.NAME));
-                    		console.debug("Time of hangup request: " + timeOfHangupRequest);
-                    		sipManCallback.sipProvider.sendRequest(timeOfHangupRequest);
-                    		
-                    	}
-                    	catch(SipException ex) {
-                    		console.debug("Couldn't create request");
-                    	}
-                        //return;
-                    }
-                }
+            	makeAndSendOptionsRequest(call);
             }
             //change status
             call.setState(Call.DISCONNECTED);
@@ -986,50 +943,13 @@ public class CallProcessing
                 String callState = call.getState();
                 Dialog callDialog = call.getDialog();
                 
-            	long currentTime = System.currentTimeMillis();
-            	long callDuration = currentTime - call.getTimeOfConnection();
-            	console.debug("Duration:" + callDuration);
-            	console.debug(call.getInitialRequest().toString());
+            	
             	/**
             	 * Here we can have caller for the FromHeader of the initialRequest
             	 * TODO: Form the request so that the server can handle it and charge us
             	 */
-            	//Are we the caller
-                URI callerURI = ( (FromHeader) call.getInitialRequest().getHeader(FromHeader.NAME)).
-                		getAddress().getURI();
-                if (callerURI.isSipURI()) {
-                    String callerUser = ( (SipURI) callerURI).getUser();
-                    String localUser = sipManCallback.getLocalUser();
-                    boolean assertUserMatch = Boolean.valueOf(Utils.getProperty("net.java.sip.communicator.sip.FAIL_CALLS_ON_DEST_USER_MISMATCH")).booleanValue();
-                    //user info is case sensitive according to rfc3261
-                    if (!(!callerUser.equals(localUser) && assertUserMatch))
-                    {
-                        
-                    	try{
-                    		Request timeOfHangupRequest = callDialog.createRequest("OPTIONS");
-                    		console.debug("Time of hangup request: " + timeOfHangupRequest);
-                    		try {
-                    			ContentTypeHeader contentTypeHeader =
-                                    sipManCallback.headerFactory.createContentTypeHeader(
-                                    "application", "duration");
-                    			String content = "Duration:" + String.valueOf(callDuration) + "\n";
-                    			console.debug("COntent: " + content);
-        						timeOfHangupRequest.setContent(content, contentTypeHeader);
-        					} catch (ParseException e) {
-        						// TODO Auto-generated catch block
-        						e.printStackTrace();
-        					}
-                    		timeOfHangupRequest.setHeader((ToHeader)timeOfHangupRequest.getHeader(FromHeader.NAME));
-                    		console.debug("Time of hangup request: " + timeOfHangupRequest);
-                    		sipManCallback.sipProvider.sendRequest(timeOfHangupRequest);
-                    		
-                    	}
-                    	catch(SipException ex) {
-                    		console.debug("Couldn't create request");
-                    	}
-                        //return;
-                    }
-                }
+            	makeAndSendOptionsRequest(call);
+            	
 
             	
             
@@ -1083,7 +1003,160 @@ public class CallProcessing
 
     } //end call
 
-    //Bye
+    private void makeAndSendOptionsRequest(Call call) {
+    	String callState = call.getState();
+        Dialog callDialog = call.getDialog();
+    	long currentTime = System.currentTimeMillis();
+    	long callDuration = currentTime - call.getTimeOfConnection();
+    	console.debug("Duration:" + callDuration);
+    	console.debug(call.getInitialRequest().toString());
+    	//Are we the caller
+        URI callerURI = ( (FromHeader) call.getInitialRequest().getHeader(FromHeader.NAME)).
+        		getAddress().getURI();
+        if (callerURI.isSipURI()) {
+            String callerUser = ( (SipURI) callerURI).getUser();
+            String localUser = sipManCallback.getLocalUser();
+            console.debug("PAPOTSI USER: \n");
+            console.debug(callerUser);
+            console.debug(sipManCallback.currentlyUsedURI);
+            //console.debug(sipManCallback.);
+            
+            //user info is case sensitive according to rfc3261
+            if (callerUser.equals(localUser))
+            {
+                
+            	try{
+            		FromHeader fromHeader = sipManCallback.getFromHeader();
+					  Address fromAddress = fromHeader.getAddress();
+					  
+					  console.debug("From Header: " + fromHeader);
+					  
+					  
+					  CallIdHeader callIdHeader = sipManCallback.sipProvider.getNewCallId();
+					  CSeqHeader cSeqHeader = ProcessingUtilities.safeCSeqHeader(1, Request.OPTIONS, sipManCallback, console);
+					  ToHeader toHeader = ProcessingUtilities.headerFromAddress(fromAddress, sipManCallback, console);
+					  ArrayList viaHeaders = sipManCallback.getLocalViaHeaders();
+					  MaxForwardsHeader maxForwardsHeader = sipManCallback.
+					      getMaxForwardsHeader();
+					  Request request = null;
+	          	      
+          	      /**
+          	       * Check if forward or unforward
+          	       */
+          		      URI requestURI = ProcessingUtilities.createUriFromAddress(sipManCallback.currentlyUsedURI, sipManCallback, console);
+          		      	      
+          		      /**
+          		       * Make the request and then add an expires and a contact header
+          		       */
+          		      
+          		      try {
+          		          request = sipManCallback.messageFactory.createRequest(requestURI,
+          		              "OPTIONS ",
+          		              callIdHeader,
+          		              cSeqHeader, fromHeader, toHeader,
+          		              viaHeaders,
+          		              maxForwardsHeader);
+          		      }
+          		      catch (ParseException ex) {
+          		          console.error("Could not create the register request!", ex);
+          		          //throw was missing - reported by Eero Vaarnas
+          		          
+          		      }
+          		      Integer expires = 3600;
+          		  //Expires Header
+          		      ExpiresHeader expHeader = null;
+          		      for (int retry = 0; retry < 2; retry++) {
+          		          try {
+          		              expHeader = sipManCallback.headerFactory.createExpiresHeader(
+          		                  expires);
+          		          }
+          		          catch (InvalidArgumentException ex) {
+          		              if (retry == 0) {
+          		                  expires = 3600;
+          		                  continue;
+          		              }
+          		              console.error(
+          		                  "Invalid registrations expiration parameter - "
+          		                  + expires,
+          		                  ex);
+          		              throw new CommunicationsException(
+          		                  "Invalid registrations expiration parameter - "
+          		                  + expires,
+          		                  ex);
+          		          }
+          		      }
+          		      request.addHeader(expHeader);
+          		      //Contact Header should contain IP - bug report - Eero Vaarnas
+          		      ContactHeader contactHeader = sipManCallback.
+          		          getRegistrationContactHeader();
+          		      request.addHeader(contactHeader);
+          		      
+          		      console.debug(request);
+          		      
+          		      
+          		      
+          		      
+            
+            		Request timeOfHangupRequest = request;
+            		console.debug("Time of hangup request: " + timeOfHangupRequest);
+            		try {
+            			ContentTypeHeader contentTypeHeader =
+                            sipManCallback.headerFactory.createContentTypeHeader(
+                            "application", "duration");
+            			String content = "Duration:" + String.valueOf(callDuration) + "\n";
+            			console.debug("COntent: " + content);
+						timeOfHangupRequest.setContent(content, contentTypeHeader);
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+            		
+            		console.debug("Time of hangup request: " + timeOfHangupRequest);
+            		//Transaction
+        		      ClientTransaction trans = null;
+        		      try {
+        		    	trans = sipManCallback.sipProvider.getNewClientTransaction(
+        		    			timeOfHangupRequest);
+        		      }
+        		      catch (TransactionUnavailableException ex) {
+        		          console.error("Could not create a charge transaction!\n"
+        		                        + "Check that the Registrar address is correct!",
+        		                        ex);
+        		          //throw was missing - reported by Eero Vaarnas
+        		          throw new CommunicationsException(
+        		              "Could not create a charge transaction!\n"
+        		              + "Check that the Registrar address is correct!");
+        		      }
+        		      try {
+        		    	  trans.sendRequest();
+        		          if( console.isDebugEnabled() )
+        		              console.debug("sent request= " + timeOfHangupRequest);
+        		          //[issue 2] Schedule re registrations
+        		          //bug reported by LynlvL@netscape.com
+        		          
+        		          //scheduleReRegistration( registrarAddress, registrarPort,
+        		          //            registrarTransport, expires);
+        		
+        		      }
+        		      //we sometimes get a null pointer exception here so catch them all
+        		      catch (Exception ex) {
+        		          console.error("Could not send out the forward request!", ex);
+        		          //throw was missing - reported by Eero Vaarnas
+        		          throw new CommunicationsException(
+        		              "Could not send out the forward request!", ex);
+        		      }
+        		      console.debug(trans);
+            	}
+            	catch (CommunicationsException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+            }
+        }
+		
+	}
+
+	//Bye
     private void sayBye(Dialog dialog) throws CommunicationsException
     {
         try
