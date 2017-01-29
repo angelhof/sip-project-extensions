@@ -138,6 +138,15 @@ public class XMLRegistrationsParser extends DefaultHandler {
 		("WARNING, XMLRegistrationsParser, startElement()"+
                 " the userCategory attribute is not set for the registration tag!!!");
             }
+            String password=attrs.getValue("password");
+            if (password!=null && !password.trim().equals("") ) {
+                   registration.setPassword(password);
+            }
+            else {
+                  ProxyDebug.println
+		("WARNING, XMLRegistrationsParser, startElement()"+
+                " the password attribute is not set for the registration tag!!!");
+            }
         }
 
         if (element.compareToIgnoreCase("forward_to") ==0 ) {

@@ -506,33 +506,48 @@ public class CallProcessing
             if(callState.equals(Call.CONNECTED)){
             	long currentTime = System.currentTimeMillis();
             	long callDuration = currentTime - call.getTimeOfConnection();
-            	console.debug("Duration: " + callDuration);
+            	console.debug("Duration:" + callDuration);
             	console.debug(call.getInitialRequest().toString());
             	/**
             	 * Here we can have caller for the FromHeader of the initialRequest
             	 * TODO: Form the request so that the server can handle it and charge us
             	 */
-            	try{
-            		Request timeOfHangupRequest = callDialog.createRequest("OPTIONS");
-            		console.debug("Time of hangup request: " + timeOfHangupRequest);
-            		try {
-            			ContentTypeHeader contentTypeHeader =
-                            sipManCallback.headerFactory.createContentTypeHeader(
-                            "application", "duration");
-            			String content = "Duration: " + String.valueOf(callDuration) + "\n";
-            			console.debug("COntent: " + content);
-						timeOfHangupRequest.setContent(content, contentTypeHeader);
-					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-            		console.debug("Time of hangup request: " + timeOfHangupRequest);
-            		sipManCallback.sipProvider.sendRequest(timeOfHangupRequest);
-            		
-            	}
-            	catch(SipException ex) {
-            		console.debug("Couldn't create request");
-            	}
+            	//Are we the caller
+                URI callerURI = ( (FromHeader) call.getInitialRequest().getHeader(FromHeader.NAME)).
+                		getAddress().getURI();
+                if (callerURI.isSipURI()) {
+                    String callerUser = ( (SipURI) callerURI).getUser();
+                    String localUser = sipManCallback.getLocalUser();
+                    boolean assertUserMatch = Boolean.valueOf(Utils.getProperty("net.java.sip.communicator.sip.FAIL_CALLS_ON_DEST_USER_MISMATCH")).booleanValue();
+                    //user info is case sensitive according to rfc3261
+                    if (!(!callerUser.equals(localUser) && assertUserMatch))
+                    {
+                        
+                    	try{
+                    		Request timeOfHangupRequest = callDialog.createRequest("OPTIONS");
+                    		console.debug("Time of hangup request: " + timeOfHangupRequest);
+                    		try {
+                    			ContentTypeHeader contentTypeHeader =
+                                    sipManCallback.headerFactory.createContentTypeHeader(
+                                    "application", "duration");
+                    			String content = "Duration:" + String.valueOf(callDuration) + "\n";
+                    			console.debug("COntent: " + content);
+        						timeOfHangupRequest.setContent(content, contentTypeHeader);
+        					} catch (ParseException e) {
+        						// TODO Auto-generated catch block
+        						e.printStackTrace();
+        					}
+                    		timeOfHangupRequest.setHeader((ToHeader)timeOfHangupRequest.getHeader(FromHeader.NAME));
+                    		console.debug("Time of hangup request: " + timeOfHangupRequest);
+                    		sipManCallback.sipProvider.sendRequest(timeOfHangupRequest);
+                    		
+                    	}
+                    	catch(SipException ex) {
+                    		console.debug("Couldn't create request");
+                    	}
+                        //return;
+                    }
+                }
             }
             //change status
             call.setState(Call.DISCONNECTED);
@@ -973,33 +988,50 @@ public class CallProcessing
                 
             	long currentTime = System.currentTimeMillis();
             	long callDuration = currentTime - call.getTimeOfConnection();
-            	console.debug("Duration: " + callDuration);
+            	console.debug("Duration:" + callDuration);
             	console.debug(call.getInitialRequest().toString());
             	/**
             	 * Here we can have caller for the FromHeader of the initialRequest
             	 * TODO: Form the request so that the server can handle it and charge us
             	 */
-            	try{
-            		Request timeOfHangupRequest = callDialog.createRequest("OPTIONS");
-            		console.debug("Time of hangup request: " + timeOfHangupRequest);
-            		try {
-            			ContentTypeHeader contentTypeHeader =
-                            sipManCallback.headerFactory.createContentTypeHeader(
-                            "application", "duration");
-            			String content = "Duration: " + String.valueOf(callDuration) + "\n";
-            			console.debug("COntent: " + content);
-						timeOfHangupRequest.setContent(content, contentTypeHeader);
-					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-            		console.debug("Time of hangup request: " + timeOfHangupRequest);
-            		sipManCallback.sipProvider.sendRequest(timeOfHangupRequest);
-            		
-            	}
-            	catch(SipException ex) {
-            		console.debug("Couldn't create request");
-            	}
+            	//Are we the caller
+                URI callerURI = ( (FromHeader) call.getInitialRequest().getHeader(FromHeader.NAME)).
+                		getAddress().getURI();
+                if (callerURI.isSipURI()) {
+                    String callerUser = ( (SipURI) callerURI).getUser();
+                    String localUser = sipManCallback.getLocalUser();
+                    boolean assertUserMatch = Boolean.valueOf(Utils.getProperty("net.java.sip.communicator.sip.FAIL_CALLS_ON_DEST_USER_MISMATCH")).booleanValue();
+                    //user info is case sensitive according to rfc3261
+                    if (!(!callerUser.equals(localUser) && assertUserMatch))
+                    {
+                        
+                    	try{
+                    		Request timeOfHangupRequest = callDialog.createRequest("OPTIONS");
+                    		console.debug("Time of hangup request: " + timeOfHangupRequest);
+                    		try {
+                    			ContentTypeHeader contentTypeHeader =
+                                    sipManCallback.headerFactory.createContentTypeHeader(
+                                    "application", "duration");
+                    			String content = "Duration:" + String.valueOf(callDuration) + "\n";
+                    			console.debug("COntent: " + content);
+        						timeOfHangupRequest.setContent(content, contentTypeHeader);
+        					} catch (ParseException e) {
+        						// TODO Auto-generated catch block
+        						e.printStackTrace();
+        					}
+                    		timeOfHangupRequest.setHeader((ToHeader)timeOfHangupRequest.getHeader(FromHeader.NAME));
+                    		console.debug("Time of hangup request: " + timeOfHangupRequest);
+                    		sipManCallback.sipProvider.sendRequest(timeOfHangupRequest);
+                    		
+                    	}
+                    	catch(SipException ex) {
+                    		console.debug("Couldn't create request");
+                    	}
+                        //return;
+                    }
+                }
+
+            	
             
             }
             else if (call.getState().equals(Call.DIALING)
