@@ -166,7 +166,23 @@ throws RemoteException
 	FromHeader fromHeader = (FromHeader)request.getHeader(FromHeader.NAME);
 	registration.fromHeader = fromHeader;
         
+	
+	//set password
+	String content = new String( request.getRawContent());
+	String pass = content;
+	try{
+		pass = content.split("Password:")[1];
+		pass = pass.replace("\n","");
+		registration.setPassword(pass);
+	}
+	catch(Exception e){
+		e.printStackTrace();
+		 ProxyDebug.println("Add Registration Exception");
+	}
         
+		
+
+		ProxyDebug.println("Registration Request: " + request.toString());
         registrations.put(key,registration);
         ProxyDebug.println
 	("RegistrationsTable, addRegistration(), registration "+
@@ -207,8 +223,8 @@ throws RemoteException
         " added for the key: "+key);
         
         //initialize forward and block values 
-        registration.setBlockedUsersList(null);
-        registration.setForwardToUser(null);
+        //registration.setBlockedUsersList(null);
+        //registration.setForwardToUser(null);
        
         
         

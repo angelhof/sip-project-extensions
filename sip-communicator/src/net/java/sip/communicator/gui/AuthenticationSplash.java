@@ -87,6 +87,7 @@ public class AuthenticationSplash
      */
     private ResourceBundle resources = null;
 
+    
     /**
      * Path to the image resources
      */
@@ -461,6 +462,7 @@ public class AuthenticationSplash
         else if (cmd.equals(CMD_LOGIN)) {
             userName = userNameTextField.getText();
             password = passwordTextField.getPassword();
+            System.out.println(new String(password));
         }
         setVisible(false);
         dispose();

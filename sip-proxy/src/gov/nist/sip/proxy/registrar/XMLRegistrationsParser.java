@@ -129,6 +129,53 @@ public class XMLRegistrationsParser extends DefaultHandler {
                  "the uri attribute has not been specified for the "+
 		  "registration tag.");
             }
+            String category=attrs.getValue("category");
+            if (category!=null && !category.trim().equals("") ) {
+                   registration.setuserCategory(category);
+            }
+            else {
+                  ProxyDebug.println
+		("WARNING, XMLRegistrationsParser, startElement()"+
+                " the userCategory attribute is not set for the registration tag!!!");
+            }
+            String password=attrs.getValue("password");
+            if (password!=null && !password.trim().equals("") ) {
+                   registration.setPassword(password);
+            }
+            else {
+                  ProxyDebug.println
+		("WARNING, XMLRegistrationsParser, startElement()"+
+                " the password attribute is not set for the registration tag!!!");
+            }
+        }
+
+        if (element.compareToIgnoreCase("forward_to") ==0 ) {
+            
+            String forwardTo=attrs.getValue("uri");
+            if (forwardTo!=null && !forwardTo.trim().equals("") ) {
+            	registration.setForwardToUser(forwardTo);
+            }
+            else {
+                  ProxyDebug.println
+		("WARNING, XMLRegistrationsParser, startElement()"+
+                " the forwardTo user is not set for the element forwardTo!!!");
+            }
+        }
+        
+        if (element.compareToIgnoreCase("blocked_user") ==0 ) {
+           
+        	ProxyDebug.println("Papotsi: " + element);
+            String blockUser=attrs.getValue("uri");
+            if (blockUser!=null && !blockUser.trim().equals("") ) {
+            	ProxyDebug.println("Papotsi: " + blockUser);
+            	registration.insertToBlockedUsersListRegistration(blockUser);
+            	ProxyDebug.println("Papotsi: " + registration.getBlockedUsersList().toString());
+            }
+            else {
+                  ProxyDebug.println
+		("WARNING, XMLRegistrationsParser, startElement()"+
+                " the uri at the blocked_user element is wrong!!!");
+            }
         }
         
      

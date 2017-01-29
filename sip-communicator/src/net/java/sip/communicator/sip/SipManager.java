@@ -57,6 +57,9 @@
  */
 package net.java.sip.communicator.sip;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.*;
 import java.text.*;
 import java.util.*;
@@ -64,6 +67,8 @@ import javax.sip.*;
 import javax.sip.address.*;
 import javax.sip.header.*;
 import javax.sip.message.*;
+import javax.swing.JOptionPane;
+
 import net.java.sip.communicator.common.*;
 import net.java.sip.communicator.sip.event.*;
 import net.java.sip.communicator.sip.security.*;
@@ -613,7 +618,7 @@ public class SipManager
      */
     public void register() throws CommunicationsException
     {
-        register(currentlyUsedURI);
+        register(currentlyUsedURI, "");
     }
 
     /**
@@ -621,17 +626,18 @@ public class SipManager
      * @param publicAddress
      * @throws CommunicationsException
      */
-    public void register(String publicAddress) throws CommunicationsException
+    public void register(String publicAddress, String password) throws CommunicationsException
     {
         try {
             console.logEntry();
             console.debug(publicAddress);
+            console.debug(password);
 
             publicAddress = checkAndCompleteAddress(publicAddress);
 
             this.currentlyUsedURI = publicAddress;
             registerProcessing.register( registrarAddress, registrarPort,
-                                  registrarTransport, registrationsExpiration);
+                                  registrarTransport, registrationsExpiration, password);
 
              //at this point we are sure we have a sip: prefix in the uri
             // we construct our pres: uri by replacing that prefix.
@@ -673,7 +679,7 @@ public class SipManager
                                         initialCredentials.getUserName()) ;
             PropertiesDepot.storeProperties();
 
-            register(initialCredentials.getUserName());
+            register(initialCredentials.getUserName(), new String(initialCredentials.getPassword()));
 
             //at this point a simple register request has been sent and the global
             //from  header in SipManager has been set to a valid value by the RegisterProcesing
@@ -1861,6 +1867,10 @@ public class SipManager
                 	}
                 	
                 }
+                else if (method.equals(Request.OPTIONS)) {
+                	console.debug("Options");
+                	chargeShow(response);
+                }
 
             }
             //ACCEPTED
@@ -2153,7 +2163,45 @@ public class SipManager
         }
     } //process response
 
-    //--------
+    private void chargeShow(Response response) {
+		// TODO Auto-generated method stub
+		/**
+		 * TODO: 
+		 * - Show the charge somewhere
+		 * - Write the charge in a file
+		 */
+    	JOptionPane.showMessageDialog(null, "My Goodness, this is so concise");
+    	
+    	
+    	/**
+    	 * Write the chargement in a file
+    	 */
+    	BufferedWriter out = null;
+    	try  
+    	{
+    	    FileWriter fstream = new FileWriter("chargements.txt", true); //true tells to append data.
+    	    out = new BufferedWriter(fstream);
+    	    out.write("Time: " + " - Charge: " + "\n");
+    	}
+    	catch (IOException e)
+    	{
+    	    System.err.println("Error: " + e.getMessage());
+    	}
+    	finally
+    	{
+    	    if(out != null) {
+    	        try {
+					out.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    	    }
+    	}
+	}
+    
+
+	//--------
     String getLocalHostAddress()
     {
         try {
