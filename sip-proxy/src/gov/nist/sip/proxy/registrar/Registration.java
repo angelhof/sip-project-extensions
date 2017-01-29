@@ -179,7 +179,6 @@ public class Registration {
             			result = false;
             			return result;
             		}
-            		itr.next();
             	}
         	}
         	

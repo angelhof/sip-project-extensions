@@ -1073,10 +1073,22 @@ implements RegistrarAccess {
 				}
 				
 				
+				//FIXED insert users that do not exist in list
+				boolean forwardeeIsValid = false;
+				if (ForwardTo!=null && registrationsTable.hasRegistration(ForwardTo)){
+					forwardeeIsValid = true;
+				}
+				else if(ForwardTo==null){
+					forwardeeIsValid = true;
+				}
+				else{
+					forwardeeIsValid = false;
+				}
+				
 				// Here we should validate if the update in the registration table by checking the graph
 				
 				
-				if(!hasCycles){
+				if(!hasCycles && forwardeeIsValid){
 					boolean updateresult = registrationsTable.updateForwardRegistration(Sender, ForwardTo); 
 					
 					if (updateresult){
@@ -1181,8 +1193,14 @@ implements RegistrarAccess {
 				String Sender = key.toString();
 				if(request.getMethod().equals("BLOCK")){
 					BlockID = request.getRequestURI().toString();
-					updateresult = registrationsTable.insertToBlockedUsersListRegistration
-							(Sender, BlockID);
+					
+					//FIXED insert users that do not exist in list
+					if (registrationsTable.hasRegistration(BlockID)){
+						updateresult = registrationsTable.insertToBlockedUsersListRegistration(Sender, BlockID);
+					}
+					else {
+						updateresult = false;
+					}
 				}
 				
 				if(request.getMethod().equals("UNBLOCK")){
