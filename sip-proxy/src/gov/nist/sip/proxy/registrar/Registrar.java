@@ -137,6 +137,7 @@ implements RegistrarAccess {
 
 				}
 			}
+			registrationsTable.printRegistrations();
 
 
 		}

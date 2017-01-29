@@ -148,7 +148,12 @@ public class PresenceServer {
         "\n   Key="+registration.getKey() +
         "\n   DisplayName="+registration.getDisplayName() +
         "\n   Contacts="+registration.getContactsList().toString());
-        
+        if(registration.getForwardToUser() != null){
+        	ProxyDebug.println("\n   Forward To ="+registration.getForwardToUser().toString());
+        }
+        if(registration.getBlockedUsersList() != null){
+        	ProxyDebug.println("\n   Blocked User List = " + registration.getBlockedUsersList().toString());
+        }
 	
         presentityManager.processRegister(registration.getKey(),Integer.MAX_VALUE);
     }
