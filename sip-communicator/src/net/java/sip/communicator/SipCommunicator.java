@@ -823,8 +823,10 @@ public class SipCommunicator
     		if(!"Blocked People".equals(unblock_usr)){
     			console.debug("Se gamaw" + unblock_usr);
     			guiManager.phoneFrame.blockPanel.remove(guiManager.phoneFrame.unblockButton);
+    			guiManager.phoneFrame.unblockButton.setSelectedItem("Blocked People");
     			guiManager.phoneFrame.unblockButton.removeItem(unblock_usr);
-                guiManager.phoneFrame.blockPanel.add(guiManager.phoneFrame.unblockButton, BorderLayout.WEST);
+                
+    			guiManager.phoneFrame.blockPanel.add(guiManager.phoneFrame.unblockButton, BorderLayout.WEST);
                 
 	        }
     	}
@@ -836,8 +838,11 @@ public class SipCommunicator
     public void forwardedOKGuiChange(ForwardEvent evt){
     	try {
             console.logEntry();
-            
-            guiManager.phoneFrame.frwl.setText("Forward to: " + evt.getReason().split("@")[0].split(":")[1]);
+            if (evt.getReason() != "None"){
+            	guiManager.phoneFrame.frwl.setText("Forward to: " + evt.getReason().split("@")[0].split(":")[1]);
+            }else{
+            	guiManager.phoneFrame.frwl.setText("Forward to: " + evt.getReason());
+            }
         }
         finally {
             console.logExit();
