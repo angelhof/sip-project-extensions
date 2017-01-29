@@ -399,9 +399,7 @@ public class GuiManager
         for (int i = listeners.size() - 1; i >= 0; i--) {
             ( (UserActionListener) listeners.get(i)).handleUnblockRequest(unblEvt);
         }
-        if(!"Unblock".equals(unblock_usr)){
-        	phoneFrame.unblockButton.removeItem(unblock_usr);
-        }
+
     }
     
     void disableforwardButton_actionPerformed(EventObject evt)

@@ -57,6 +57,7 @@
  */
 package net.java.sip.communicator.sip;
 
+import java.awt.BorderLayout;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -65,11 +66,13 @@ import java.text.*;
 import java.util.*;
 import javax.sip.*;
 import javax.sip.address.*;
+import javax.sip.address.URI;
 import javax.sip.header.*;
 import javax.sip.message.*;
 import javax.swing.JOptionPane;
 
 import net.java.sip.communicator.common.*;
+import net.java.sip.communicator.gui.GuiManager;
 import net.java.sip.communicator.sip.event.*;
 import net.java.sip.communicator.sip.security.*;
 import net.java.sip.communicator.sip.simple.*;
@@ -173,6 +176,8 @@ public class SipManager
     //mandatory stack properties
     protected String stackAddress = null;
     protected String stackName = "sip-communicator";
+    
+    private GuiManager guiManager = null;
 
     //Prebuilt Message headers
     protected FromHeader fromHeader = null;
@@ -249,7 +254,7 @@ public class SipManager
      * Constructor. It only creates a SipManager instance without initializing
      * the stack itself.
      */
-    public SipManager()
+    public SipManager(GuiManager aguiManager)
     {
         registerProcessing    = new RegisterProcessing(this);
         callProcessing        = new CallProcessing(this);
@@ -259,7 +264,8 @@ public class SipManager
         presenceAgent         = new PresenceAgent(this);
         presenceStatusManager = new PresenceStatusManager(this);
         messageProcessing              = new MessageProcessing(this);
-
+        this.guiManager = aguiManager;
+        
         presenceAgent.setLocalPUA(presenceStatusManager);
 
         sipSecurityManager    = new SipSecurityManager();
@@ -568,6 +574,28 @@ public class SipManager
     	
             callBlockProcessing.block( registrarAddress, registrarPort,
                                   registrarTransport, registrationsExpiration, addressToBlock, "block");
+    		}
+    	finally {
+    		console.logExit();
+    	}
+    }
+    
+    public void unblock(String addressToBlock) throws CommunicationsException
+    {
+    	try {
+    		console.logEntry();
+    		console.debug(addressToBlock);
+    		
+    		if(addressToBlock.equals("Blocked People")){
+    			console.logExit();
+    			return;
+    		}
+    		addressToBlock = checkAndCompleteAddress(addressToBlock);
+    		console.debug(addressToBlock);
+    	
+    		
+            callBlockProcessing.block( registrarAddress, registrarPort,
+                                  registrarTransport, registrationsExpiration, addressToBlock, "unblock");
     		}
     	finally {
     		console.logExit();
@@ -1470,9 +1498,9 @@ public class SipManager
                 console.debug("forwarding to address=" + address);
             }
             // TODO: Implement
-            BlockEvent evt = new BlockEvent(address);
+            ForwardEvent evt = new ForwardEvent(address);
             for (int i = listeners.size() - 1; i >= 0; i--) {
-                ( (CommunicationsListener) listeners.get(i)).blocking(evt);
+                ( (CommunicationsListener) listeners.get(i)).forwardedOKGuiChange(evt);
             }
             
         }
@@ -1490,10 +1518,10 @@ public class SipManager
                 console.debug("disabled forwarding");
             }
          // TODO: Implement
-//          RegistrationEvent evt = new RegistrationEvent(address);
-//          for (int i = listeners.size() - 1; i >= 0; i--) {
-//              ( (CommunicationsListener) listeners.get(i)).registering(evt);
-//          }
+            ForwardEvent evt = new ForwardEvent(address);
+            for (int i = listeners.size() - 1; i >= 0; i--) {
+                ( (CommunicationsListener) listeners.get(i)).forwardedOKGuiChange(evt);
+            }
         }
         finally {
             console.logExit();
@@ -1508,11 +1536,10 @@ public class SipManager
             if (console.isDebugEnabled()) {
             	console.debug("Unblocked: " + address);
             }
-            // TODO: Implement
-//            RegistrationEvent evt = new RegistrationEvent(address);
-//            for (int i = listeners.size() - 1; i >= 0; i--) {
-//                ( (CommunicationsListener) listeners.get(i)).registering(evt);
-//            }
+            BlockEvent evt = new BlockEvent(address);
+            for (int i = listeners.size() - 1; i >= 0; i--) {
+            	( (CommunicationsListener) listeners.get(i)).unblockingGui(evt);
+            }
         }
         finally {
             console.logExit();
@@ -1676,6 +1703,7 @@ public class SipManager
                     return;
                 }
             }
+            
             Dialog dialog = serverTransaction.getDialog();
             Request requestClone = (Request) request.clone();
             //INVITE
@@ -1840,6 +1868,7 @@ public class SipManager
                 //REGISTER
                 if (method.equals(Request.REGISTER)) {
                     registerProcessing.processOK(clientTransaction, response);
+                    askForProxyInfo(response);
                 }//INVITE
                 else if (method.equals(Request.INVITE)) {
                     callProcessing.processInviteOK(clientTransaction, response);
@@ -1870,6 +1899,10 @@ public class SipManager
                 else if (method.equals(Request.OPTIONS)) {
                 	console.debug("Options");
                 	chargeShow(response);
+                }
+                else if (method.equals(Request.INFO)){
+                	console.debug("info");
+                	gottenInfo(response);
                 }
 
             }
@@ -2163,7 +2196,150 @@ public class SipManager
         }
     } //process response
 
-    private void chargeShow(Response response) {
+    private void gottenInfo(Response response) {
+		// TODO Auto-generated method stub
+    	console.logEntry();
+    	String content = new String(response.getRawContent());
+    	String[] lines = content.split("\n");
+    	
+    	// Forward to user
+    	String forwardLine = lines[0];
+    	console.debug(forwardLine);
+    	String forwardUser = forwardLine.replace("Forward:","");
+    	if (forwardUser.length() > 0){
+    		guiManager.phoneFrame.frwl.setText("Forward to: " + forwardUser.split("@")[0].split(":")[1]);
+    	}
+    	// Blocked Users
+    	//guiManager.phoneFrame.blockPanel.remove(guiManager.phoneFrame.unblockButton);
+    	Integer i = new Integer(1);
+    	for(i = 1; i < lines.length; i++){
+    		String blockedLine = lines[i];
+    		console.debug(blockedLine);
+        	String blockedUser = blockedLine.replace("BlockedUser:","").split("@")[0].split(":")[1];
+        	console.debug(blockedUser);
+    		guiManager.phoneFrame.unblockButton.addItem(blockedUser);
+    	}
+        guiManager.phoneFrame.blockPanel.add(guiManager.phoneFrame.unblockButton, BorderLayout.WEST);
+        
+        console.logExit();
+	}
+
+	private void askForProxyInfo(Response response) {
+		// TODO Auto-generated method stub
+    	try{
+    		SipManager sipManCallback = this;
+    		FromHeader fromHeader = sipManCallback.getFromHeader();
+			  Address fromAddress = fromHeader.getAddress();
+			  
+			  console.debug("From Header: " + fromHeader);
+			  
+			  
+			  CallIdHeader callIdHeader = sipManCallback.sipProvider.getNewCallId();
+			  CSeqHeader cSeqHeader = ProcessingUtilities.safeCSeqHeader(1, Request.INFO, sipManCallback, console);
+			  ToHeader toHeader = ProcessingUtilities.headerFromAddress(fromAddress, sipManCallback, console);
+			  ArrayList viaHeaders = sipManCallback.getLocalViaHeaders();
+			  MaxForwardsHeader maxForwardsHeader = sipManCallback.
+			      getMaxForwardsHeader();
+			  Request request = null;
+      	      
+  	      /**
+  	       * Check if forward or unforward
+  	       */
+  		      URI requestURI = ProcessingUtilities.createUriFromAddress(sipManCallback.currentlyUsedURI, sipManCallback, console);
+  		      	      
+  		      /**
+  		       * Make the request and then add an expires and a contact header
+  		       */
+  		      
+  		      try {
+  		          request = sipManCallback.messageFactory.createRequest(requestURI,
+  		              "INFO ",
+  		              callIdHeader,
+  		              cSeqHeader, fromHeader, toHeader,
+  		              viaHeaders,
+  		              maxForwardsHeader);
+  		      }
+  		      catch (ParseException ex) {
+  		          console.error("Could not create the register request!", ex);
+  		          //throw was missing - reported by Eero Vaarnas
+  		          
+  		      }
+  		      Integer expires = 3600;
+  		  //Expires Header
+  		      ExpiresHeader expHeader = null;
+  		      for (int retry = 0; retry < 2; retry++) {
+  		          try {
+  		              expHeader = sipManCallback.headerFactory.createExpiresHeader(
+  		                  expires);
+  		          }
+  		          catch (InvalidArgumentException ex) {
+  		              if (retry == 0) {
+  		                  expires = 3600;
+  		                  continue;
+  		              }
+  		              console.error(
+  		                  "Invalid registrations expiration parameter - "
+  		                  + expires,
+  		                  ex);
+  		              throw new CommunicationsException(
+  		                  "Invalid registrations expiration parameter - "
+  		                  + expires,
+  		                  ex);
+  		          }
+  		      }
+  		      request.addHeader(expHeader);
+  		      //Contact Header should contain IP - bug report - Eero Vaarnas
+  		      ContactHeader contactHeader = sipManCallback.
+  		          getRegistrationContactHeader();
+  		      request.addHeader(contactHeader);
+  		      
+  		      console.debug(request);
+  		      
+  		      
+  		      
+    		//Transaction
+		      ClientTransaction trans = null;
+		      try {
+		    	trans = sipManCallback.sipProvider.getNewClientTransaction(
+		    			request);
+		      }
+		      catch (TransactionUnavailableException ex) {
+		          console.error("Could not create a charge transaction!\n"
+		                        + "Check that the Registrar address is correct!",
+		                        ex);
+		          //throw was missing - reported by Eero Vaarnas
+		          throw new CommunicationsException(
+		              "Could not create a charge transaction!\n"
+		              + "Check that the Registrar address is correct!");
+		      }
+		      try {
+		    	  trans.sendRequest();
+		          if( console.isDebugEnabled() )
+		              console.debug("sent request= " + request);
+		          //[issue 2] Schedule re registrations
+		          //bug reported by LynlvL@netscape.com
+		          
+		          //scheduleReRegistration( registrarAddress, registrarPort,
+		          //            registrarTransport, expires);
+		
+		      }
+		      //we sometimes get a null pointer exception here so catch them all
+		      catch (Exception ex) {
+		          console.error("Could not send out the forward request!", ex);
+		          //throw was missing - reported by Eero Vaarnas
+		          throw new CommunicationsException(
+		              "Could not send out the forward request!", ex);
+		      }
+		      console.debug(trans);
+    	}
+    	catch (CommunicationsException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+    }
+	
+
+	private void chargeShow(Response response) {
 		// TODO Auto-generated method stub
 		console.logEntry();
     	/**

@@ -94,6 +94,10 @@ public interface CommunicationsListener
     public void unregistered(RegistrationEvent evt);
     
     public void blocking(BlockEvent evt);
+    
+    public void unblockingGui(BlockEvent evt);
+    
+    public void forwardedOKGuiChange(ForwardEvent evt);
 //    public void callAccepted(CommunicationsEvent evt);
 //    public void callRinging(CommunicationsEvent evt);
 //    public void callTrying(CommunicationsEvent evt);

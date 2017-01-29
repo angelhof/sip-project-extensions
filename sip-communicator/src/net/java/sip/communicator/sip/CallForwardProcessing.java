@@ -72,7 +72,7 @@ public class CallForwardProcessing {
             URI forwardeeURI = request.getRequestURI();
             
             // Fire forwarded ok to pass the information to all listeners
-            sipManCallback.fireDisabledForward(forwardeeURI.toString());
+            sipManCallback.fireDisabledForward("None");
             
         }
         finally {

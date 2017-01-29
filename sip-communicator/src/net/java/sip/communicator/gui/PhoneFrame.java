@@ -138,14 +138,14 @@ public class PhoneFrame
     /**
      * Block & Unblock GUI
      */
-    JPanel blockPanel = new JPanel();
+    public JPanel blockPanel = new JPanel();
     JButton blockButton = new JButton();
     
-    String[] blockedpeople = {"Unblock", "Katerina", "Chris"};
+    String[] blockedpeople = {"Blocked People"};
     public JComboBox unblockButton = new JComboBox(blockedpeople);
     
     JPanel forwardl = new JPanel();
-    JLabel frwl = new JLabel();
+    public JLabel frwl = new JLabel();
     Font myFont = new Font("Serif", Font.ITALIC | Font.BOLD, 12);
     
     BorderLayout borderLayoutDialForwardBlock = new BorderLayout();
@@ -215,7 +215,7 @@ public class PhoneFrame
         unblockButton.setEnabled(false);
         //unblockButton.setRenderer(new MyComboBoxRenderer("Unblock"));
         unblockButton.setSelectedIndex(0);
-        //unblockButton.addItem("Ariadni");
+        //unblockButton.addIt
         
         this.getContentPane().add(dialForwardBlockPanel, BorderLayout.NORTH);
         dialForwardBlockPanel.add(dialPanel, BorderLayout.NORTH);
@@ -232,6 +232,7 @@ public class PhoneFrame
         
         blockPanel.add(blockButton, BorderLayout.EAST);
         blockPanel.add(unblockButton, BorderLayout.WEST);
+        
         
     }
 
