@@ -92,6 +92,8 @@ public interface CommunicationsListener
     public void unregistering(RegistrationEvent evt);
 
     public void unregistered(RegistrationEvent evt);
+    
+    public void blocking(BlockEvent evt);
 //    public void callAccepted(CommunicationsEvent evt);
 //    public void callRinging(CommunicationsEvent evt);
 //    public void callTrying(CommunicationsEvent evt);

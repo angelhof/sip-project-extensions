@@ -113,7 +113,7 @@ public class GuiManager
     private ContactListFrame contactList  = null;
     private ConfigFrame      configFrame  = null;
     private ArrayList        listeners    = null;
-    public ArrayList         blocked      = null;
+    public ContactListFrame  blocked      = null;
     private AlertManager     alertManager = null;
 
 /** @todo remove after testing */
@@ -144,7 +144,7 @@ public class GuiManager
         contactList   = new ContactListFrame();
         configFrame   = new ConfigFrame(phoneFrame);
         listeners     = new ArrayList();
-        blocked       = new ArrayList();
+        blocked       = new ContactListFrame();
         alertManager  = new AlertManager();
         logoPanel     = new JPanel(new FlowLayout(FlowLayout.CENTER));
         interlocutors = new InterlocutorsTableModel();
@@ -391,13 +391,16 @@ public class GuiManager
     {
         //TODO temporarily close alerts from here.
         alertManager.stopAllAlerts();
-        String unblock_usr = phoneFrame.contactBox.getSelectedItem().toString();
+        String unblock_usr = phoneFrame.unblockButton.getSelectedItem().toString();
         if (unblock_usr == null || unblock_usr.trim().length() < 1) {
             return;
         }
         UserUnblockEvent unblEvt = new UserUnblockEvent(unblock_usr);
         for (int i = listeners.size() - 1; i >= 0; i--) {
             ( (UserActionListener) listeners.get(i)).handleUnblockRequest(unblEvt);
+        }
+        if(!"Unblock".equals(unblock_usr)){
+        	phoneFrame.unblockButton.removeItem(unblock_usr);
         }
     }
     

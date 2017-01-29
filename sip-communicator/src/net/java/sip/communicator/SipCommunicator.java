@@ -1,5 +1,5 @@
 /* ====================================================================
- * The Apache Software License, Version 1.1
+ *  * The Apache Software License, Version 1.1
  *
  * Copyright (c) 2000 The Apache Software Foundation.  All rights
  * reserved.
@@ -1090,6 +1090,12 @@ public class SipCommunicator
 
         return SubscriptionAuthorizationResponse.createResponse(response);
     }
+
+	@Override
+	public void blocking(BlockEvent evt) {
+		// TODO Auto-generated method stub
+		
+	}
 
 
 }
