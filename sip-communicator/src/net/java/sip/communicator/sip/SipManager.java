@@ -2166,7 +2166,8 @@ public class SipManager
 
     private void chargeShow(Response response) {
 		// TODO Auto-generated method stub
-		/**
+		console.logEntry();
+    	/**
 		 * TODO: 
 		 * - Show the charge somewhere
 		 * - Write the charge in a file
@@ -2204,6 +2205,7 @@ public class SipManager
 				}
     	    }
     	}
+    	console.logExit();
 	}
     
 
