@@ -109,7 +109,7 @@ public class GuiManager
         initLookAndFeel();
     }
 
-    private PhoneFrame       phoneFrame   = null;
+    public PhoneFrame       phoneFrame   = null;
     private ContactListFrame contactList  = null;
     private ConfigFrame      configFrame  = null;
     private ArrayList        listeners    = null;

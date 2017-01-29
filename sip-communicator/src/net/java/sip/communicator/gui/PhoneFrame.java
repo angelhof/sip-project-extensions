@@ -73,7 +73,7 @@ import javax.swing.border.*;
  * @version 1.1
  *
  */
-class PhoneFrame
+public class PhoneFrame
     extends JFrame
 {
     BorderLayout borderLayout1 = new BorderLayout();
@@ -142,7 +142,7 @@ class PhoneFrame
     JButton blockButton = new JButton();
     
     String[] blockedpeople = {"Unblock", "Katerina", "Chris"};
-    JComboBox unblockButton = new JComboBox(blockedpeople);
+    public JComboBox unblockButton = new JComboBox(blockedpeople);
     
     JPanel forwardl = new JPanel();
     JLabel frwl = new JLabel();

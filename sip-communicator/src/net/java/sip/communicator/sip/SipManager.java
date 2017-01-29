@@ -1527,12 +1527,11 @@ public class SipManager
             if (console.isDebugEnabled()) {
                 console.debug("Blocked: " + address);
             }
-         // TODO: Implement
-          BlockEvent evt = new BlockEvent(address);
-          for (int i = listeners.size() - 1; i >= 0; i--) {
-              ( (CommunicationsListener) listeners.get(i)).blocking(evt);
-          }
-          
+            BlockEvent evt = new BlockEvent(address);
+            for (int i = listeners.size() - 1; i >= 0; i--) {
+            	( (CommunicationsListener) listeners.get(i)).blocking(evt);
+            }
+            
         }
         finally {
             console.logExit();

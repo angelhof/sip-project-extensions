@@ -782,6 +782,18 @@ public class SipCommunicator
             console.logExit();
         }
     }
+    
+    public void blocking(BlockEvent evt){
+    	try {
+            console.logEntry();
+            guiManager.setGlobalStatus(GuiManager.REGISTERING,
+                                       evt.getReason());
+            guiManager.phoneFrame.unblockButton.addItem(evt.getReason());
+        }
+        finally {
+            console.logExit();
+        }
+    }
 
     public void unregistered(RegistrationEvent evt)
     {
@@ -1090,12 +1102,4 @@ public class SipCommunicator
 
         return SubscriptionAuthorizationResponse.createResponse(response);
     }
-
-	@Override
-	public void blocking(BlockEvent evt) {
-		// TODO Auto-generated method stub
-		
 	}
-
-
-}
