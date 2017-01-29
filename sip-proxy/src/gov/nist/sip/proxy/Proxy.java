@@ -508,15 +508,23 @@ public class Proxy implements SipListener  {
 			/**
 			 * If the request is options and the content says duration 29-1-2017
 			 */
-			if (request.getMethod().equals("OPTIONS") && request.getContent().toString().contains("Duration")){
-		        ProxyDebug.println("OPTION request in proxy , request: "+request.toString());
+			
+			
+			if (request.getMethod().equals("OPTIONS")){
+				String content = new String( request.getRawContent());
+				if (content.contains("Duration")){
+					
+					ProxyDebug.println("OPTION request in proxy , request: "+request.toString());
+			        
+			        //send the response to the user
+			        
+			        registrar.processUserBilling(request,sipProvider,serverTransaction, headerFactory);    
+	        
+			        
+			        return;
+				}
+				
 		        
-		        //send the response to the user
-		        
-		        //registrar.processUserForward(request,sipProvider,serverTransaction);    
-        
-		        
-		        return;
 			}
 
 			// we use a SIP registrar:

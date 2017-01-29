@@ -19,6 +19,7 @@ import javax.sip.header.*;
 import javax.sip.address.*;
 import java.util.*;
 import java.net.URLEncoder;
+import gov.nist.sip.proxy.Chargement;
 import gov.nist.sip.proxy.presenceserver.*;
 import gov.nist.sip.proxy.gui.*;
 import org.jgraph.JGraph;
@@ -417,8 +418,8 @@ implements RegistrarAccess {
 			
 			try{
 				pass = content.split("Password:")[1];
-				pass = pass.split("\n")[0];
-				
+				pass = pass.replace("\n","");
+
 			}
 			catch(Exception e){
 				e.printStackTrace();
@@ -1224,18 +1225,26 @@ implements RegistrarAccess {
 	 */
 	
 	public void processUserBilling(Request request, SipProvider sipProvider,
-			ServerTransaction serverTransaction ){
+			ServerTransaction serverTransaction , HeaderFactory headerFactory){
 		try{
 			MessageFactory messageFactory=proxy.getMessageFactory();
 
-			String key=request.getHeader(FromHeader.NAME).toString();
+			String content = new String( request.getRawContent());
+			String key = getKey(request);
+			String duration = content.split("Duration:")[1];
 
-			// Add the key if it is a new user:
-			if (ProxyDebug.debug){
-				ProxyDebug.println
-				("Registrar, processUserBilling(), key: \""+key+"\"");
-			}
-			if (key==null){
+			duration = duration.replace("\n","");
+
+			Integer durationTime = Integer.parseInt(duration);
+
+			Double durationTimeInSec = new Double(durationTime) / 1000;
+			
+			ProxyDebug.println("Duration in Time in Seconds: "+durationTimeInSec+" for Key: "+key);
+			Double chargement = durationTimeInSec;
+			
+			
+			
+			if (key==null ){
 				if (ProxyDebug.debug) {
 					ProxyDebug.println
 					("Registrar, processUserBilling(), key is null"+
@@ -1249,19 +1258,46 @@ implements RegistrarAccess {
 				return ;
 			}
 
-
 			if ( registrationsTable.hasRegistration(key) ) {
+				
+				Hashtable registrations=registrationsTable.getRegistrations();
+		        Registration registration=(Registration)registrations.get(key);
+				
 				ProxyDebug.println("Content of request is: "+request.getContent());
 				ProxyDebug.println("URI of request is: "+request.getRequestURI());
 				ProxyDebug.println("Key is: "+key.toString());
 				
-				boolean updateresult = false;
-				
-				String BlockID = null;
-				String Sender = key.toString();
-				
+				boolean updateresult = true;
+								
+				if (updateresult){
+					//if we are here everything went as planned
+					Response response=
+							messageFactory.createResponse(Response.OK,request);
+					ContentTypeHeader hbill = headerFactory.createContentTypeHeader("application", "billing");
 					
-		
+					if (registration.getuserCategory().equals("Normal")){
+						chargement = durationTimeInSec * Chargement.normalChargement; 
+					}
+					else if (registration.getuserCategory().equals("Premium")){
+						chargement = durationTimeInSec * Chargement.premiumChargement; 
+					}
+					
+					response.setContent("Chargement: "+chargement.toString(), hbill);
+
+					if (serverTransaction!=null)
+						serverTransaction.sendResponse(response);
+					else sipProvider.sendResponse(response); 
+
+					if (ProxyDebug.debug)  {
+						ProxyDebug.println
+						("Registrar, processUserBilling(), response sent:");
+						ProxyDebug.print(response.toString());
+					}
+					
+					return;
+					
+				}
+				
 			}
 			
 			

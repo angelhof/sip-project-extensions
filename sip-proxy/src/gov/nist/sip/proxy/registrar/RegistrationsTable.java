@@ -172,7 +172,7 @@ throws RemoteException
 	String pass = content;
 	try{
 		pass = content.split("Password:")[1];
-		pass = pass.split("\n")[0];
+		pass = pass.replace("\n","");
 		registration.setPassword(pass);
 	}
 	catch(Exception e){
