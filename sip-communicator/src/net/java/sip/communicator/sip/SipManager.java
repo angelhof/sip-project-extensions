@@ -661,8 +661,10 @@ public class SipManager
             console.debug(publicAddress);
             console.debug(password);
 
+            this.displayName= publicAddress;
             publicAddress = checkAndCompleteAddress(publicAddress);
 
+            
             this.currentlyUsedURI = publicAddress;
             registerProcessing.register( registrarAddress, registrarPort,
                                   registrarTransport, registrationsExpiration, password);
