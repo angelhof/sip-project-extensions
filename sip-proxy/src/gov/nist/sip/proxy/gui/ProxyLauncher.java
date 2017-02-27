@@ -63,8 +63,10 @@ public class ProxyLauncher extends JFrame{
     protected JPanel secondPanel;
     protected JPanel thirdPanel;
     protected JPanel fourthPanel;
+    protected JPanel fifthPanel;
     
     protected JButton proxyButton;
+    protected JButton statusButton;
     protected JButton traceViewerButton;
     
     protected RegistrationsList registrationsList;
@@ -279,6 +281,29 @@ public class ProxyLauncher extends JFrame{
         proxyButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                   listenerProxy.proxyActionPerformed(evt);
+            }
+          }
+        );
+        
+        fifthPanel=new JPanel();
+        fifthPanel.setOpaque(false);
+        fifthPanel.setBorder(BorderFactory.createEmptyBorder(5,20,10,20));
+        container.add(fifthPanel);
+        // row, column, gap, gap
+        fifthPanel.setLayout( new GridLayout(1,2,5,5) );
+        
+        statusButton=new JButton("Change Status: Normal/Premium");
+        statusButton.setToolTipText("Please, start/stop the proxy!!!");
+        statusButton.setFont(new Font ("Dialog", 1, 14));
+        statusButton.setFocusPainted(false);
+        statusButton.setBackground(buttonBackGroundColor);
+        statusButton.setBorder(buttonBorder);
+        statusButton.setVerticalAlignment(AbstractButton.CENTER);
+        statusButton.setHorizontalAlignment(AbstractButton.CENTER);
+        fifthPanel.add(statusButton);
+        statusButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                  listenerProxy.statusActionPerformed(evt);
             }
           }
         );

@@ -42,13 +42,13 @@ public class RegistrationsList extends JList {
             if (registrationsTable !=null) {
                 Hashtable r=registrationsTable.getRegistrations();
                 if (r==null || r.size()==0) {
-                    list.addElement("(empty)");
-                    return;
+                	list.addElement("(empty)");
+                	return;
                 }
                 Enumeration e=r.keys();
                 while (e.hasMoreElements()) {
-                    String key=(String)e.nextElement();
-                    list.addElement(key);
+                	String key=(String)e.nextElement();
+                	list.addElement(key);
                 }
             }
             else list.addElement("(empty)");
@@ -60,7 +60,7 @@ public class RegistrationsList extends JList {
     public  void updateRegistration(Registration registration,boolean toRemove) {
    
         if (registration!=null ) {
-            String  key=registration.getKey(); // key=="sip:user@domain"
+            String  key=registration.getKey()+" "+registration.getuserCategory(); // key=="sip:user@domain"
 	    boolean inList=list.contains(key);
 
 	    

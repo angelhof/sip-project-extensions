@@ -6,6 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.*;
+import java.rmi.RemoteException;
+
 import gov.nist.sip.proxy.*;
 import gov.nist.sip.proxy.Proxy;
 import tools.tracesviewer.*;
@@ -20,12 +22,42 @@ public class ListenerProxy {
    
     protected Process rmiregistryProcess;
     protected TracesViewer tracesViewer;
+    protected String xmlRegistrationsFile;
     
     public boolean isProxyStarted() {
         return PROXY_STARTED;
     }
-
     
+    public static void writeFile(String outFile, String text) {
+		// we read this file to obtain the options
+		try{
+			FileWriter fileWriter = new FileWriter(outFile,false);
+			PrintWriter pw = new PrintWriter(fileWriter,true);
+			//System.out.println(text);
+			if (text==null) {
+				pw.println();
+				//System.out.println("null");
+			}
+			else
+			{
+				pw.println(text);
+				//System.out.println(text);
+			}
+
+			pw.close();
+			fileWriter.close();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+    public void writeXMLRegistrations() {
+		String registrationsTags=registrationsTable.getXMLTags();
+		//System.out.println(registrationsTags);
+		writeFile(xmlRegistrationsFile,registrationsTags);
+		System.out.println("OK");
+	}
     
     public ListenerProxy(ProxyLauncher proxyLauncher) {
         this.proxyLauncher=proxyLauncher;
@@ -44,7 +76,7 @@ public class ListenerProxy {
         }
     }
     
-   
+	public  RegistrationsTable registrationsTable;  
     
     public void configurationActionPerformed(ActionEvent em){
         try{
@@ -138,6 +170,59 @@ public class ListenerProxy {
         }
         catch(Exception e) {
            ProxyDebug.println("ERROR trying to start the proxy, exception raised:"+e.getMessage());
+           //e.printStackTrace();
+        }
+    }
+    
+    public void statusActionPerformed(ActionEvent ev) {
+        try{
+        	
+        	Proxy proxy=proxyLauncher.getProxy();
+            Registrar registrar=proxy.getRegistrar();
+
+            if (registrar!=null) {
+            	ProxyDebug.println("DEBUG, GUI chained to the registrar");
+                registrar.setRegistrationsList(proxyLauncher.registrationsList);
+            }
+            String s = proxyLauncher.registrationsList.getSelectedValue().toString();
+            //System.out.println(s);
+            
+            registrationsTable=registrar.getRegistrationsTable();
+            Iterator iterator=registrationsTable.getRegistrations().keySet().iterator();
+
+            while (iterator!=null && iterator.hasNext()) {            	
+            	//ProxyDebug.println("[Registrations Graph here] Vertexes Done!");
+
+    			Registration registration=(Registration)registrationsTable.getRegistrations().get(iterator.next());
+    			//ProxyDebug.println("[Registrations Graph Iteration] Got Registration! "+registration.toString());
+
+    			String contact = registration.getKey();
+    			//ProxyDebug.println("[Registrations Graph Iteration] Vertex To add! "+vertexToAdd);
+    			String[] parts = s.split(" ");
+    			//System.out.println(parts[0]);
+    			String c = parts[0]+"";
+    			System.out.println(c);
+    			System.out.println(s);
+    			if(s.equals(c)){
+    				System.out.println(c);
+    				if((registration.getuserCategory()).equals("Normal")){
+    					System.out.println("in");
+    					registration.setuserCategory("Premium");
+    					//System.out.println(s);
+    					System.out.println(registration.getuserCategory());
+    					//proxyLauncher.registrationsList.updateRegistration(registration, false);
+    					}
+    				else{
+    					registration.setuserCategory("Normal");
+    				}
+    			}
+                //System.out.println(registration.getXMLTags());
+
+    		}
+            this.writeXMLRegistrations();
+        }
+        catch(Exception e) {
+           ProxyDebug.println("ERROR trying to change the status, exception raised:"+e.getMessage());
            //e.printStackTrace();
         }
     }

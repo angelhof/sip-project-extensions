@@ -25,7 +25,7 @@ public class Registration {
 	protected Vector BlockedUsersList;
 	
 	//extra field for category of user
-	protected String userCategory;
+	public String userCategory;
 	
 	// extra field for password of the user
 	protected String password;

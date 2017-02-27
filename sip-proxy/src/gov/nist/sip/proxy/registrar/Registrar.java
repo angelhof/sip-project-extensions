@@ -51,7 +51,7 @@ extends UnicastRemoteObject
 //
 implements RegistrarAccess {
 
-	protected  RegistrationsTable registrationsTable;
+	public  RegistrationsTable registrationsTable;
 	protected  RegistrationsList gui;
 	protected  Proxy proxy;
 
