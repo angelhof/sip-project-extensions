@@ -202,15 +202,15 @@ public class ListenerProxy {
     			//System.out.println(parts[0]);
     			String c = parts[0]+"";
     			System.out.println(c);
-    			System.out.println(s);
-    			if(s.equals(c)){
+    			System.out.println(contact);
+    			if(contact.equals(c)){
     				System.out.println(c);
     				if((registration.getuserCategory()).equals("Normal")){
     					System.out.println("in");
     					registration.setuserCategory("Premium");
     					//System.out.println(s);
     					System.out.println(registration.getuserCategory());
-    					//proxyLauncher.registrationsList.updateRegistration(registration, false);
+    					proxyLauncher.registrationsList.updateRegistration(registration, false);
     					}
     				else{
     					registration.setuserCategory("Normal");
