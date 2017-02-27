@@ -29,7 +29,8 @@ public class ListenerProxy {
     }
     
     public static void writeFile(String outFile, String text) {
-		// we read this file to obtain the options
+    	System.out.println("writeFile: [entry]");
+    	// we read this file to obtain the options
 		try{
 			FileWriter fileWriter = new FileWriter(outFile,false);
 			PrintWriter pw = new PrintWriter(fileWriter,true);
@@ -50,12 +51,15 @@ public class ListenerProxy {
 		catch(Exception e) {
 			e.printStackTrace();
 		}
+		System.out.println("writeFile: [exit]");
 	}
 
     public void writeXMLRegistrations() {
+    	System.out.println("writeXMLRegistrations: [entry]");
 		String registrationsTags=registrationsTable.getXMLTags();
 		//System.out.println(registrationsTags);
 		writeFile(xmlRegistrationsFile,registrationsTags);
+		System.out.println("writeXMLRegistrations: [exit]");
 		System.out.println("OK");
 	}
     
@@ -66,7 +70,7 @@ public class ListenerProxy {
         try{
             configurationFrame=new ConfigurationFrame(proxyLauncher,"Configuration");
             helpBox=new HelpBox();
-            
+            xmlRegistrationsFile = proxyLauncher.getProxy().getConfiguration().registrationsFile;
             // First, we have to start a registry for logging the traces
             //startRMIregistry();
             
