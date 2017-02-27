@@ -207,13 +207,16 @@ public class ListenerProxy {
     				System.out.println(c);
     				if((registration.getuserCategory()).equals("Normal")){
     					System.out.println("in");
+    					proxyLauncher.registrationsList.updateRegistration(registration, true);
     					registration.setuserCategory("Premium");
     					//System.out.println(s);
     					System.out.println(registration.getuserCategory());
     					proxyLauncher.registrationsList.updateRegistration(registration, false);
     					}
     				else{
+    					proxyLauncher.registrationsList.updateRegistration(registration, true);
     					registration.setuserCategory("Normal");
+    					proxyLauncher.registrationsList.updateRegistration(registration, false);
     				}
     			}
                 //System.out.println(registration.getXMLTags());
